@@ -50,12 +50,12 @@ class Info extends Component{
   render() {
       return (
         <div>
-       
+       <p></p>
         <div>
      
         </div>
         <div>
-        <button type="button" onClick={(e) => this.handleClick(e)}>Click Me!</button>
+        <button type="button" onClick={(e) => this.callStuff(e)}>Click Me!</button>
         </div>
         
         

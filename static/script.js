@@ -13711,6 +13711,7 @@ var Info = function (_Component) {
       return _react2.default.createElement(
         'div',
         null,
+        _react2.default.createElement('p', null),
         _react2.default.createElement('div', null),
         _react2.default.createElement(
           'div',
@@ -13718,7 +13719,7 @@ var Info = function (_Component) {
           _react2.default.createElement(
             'button',
             { type: 'button', onClick: function onClick(e) {
-                return _this2.handleClick(e);
+                return _this2.callStuff(e);
               } },
             'Click Me!'
           )
