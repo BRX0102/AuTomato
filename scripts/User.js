@@ -16,11 +16,11 @@ var socket = SocketIO.connect();
 class Info extends Component{
  constructor(props) {
    super(props);
-    //this.state = {
-   //   CO2:PropTypes.string
+    this.state = {
+    CO2:""
       
-    //};
-   
+    };
+   this._CO2= this._CO2.bind(this)
   }
  
 
@@ -33,10 +33,10 @@ class Info extends Component{
         
       });
   }
-  _CO2(data)
-  {
-  //this.state.CO2=data
-  console.log("hello");
+  _CO2(data){
+    console.log(data);
+  this.setState({ CO2:data });
+  //console.log("hello");
     
   }
 
@@ -50,7 +50,7 @@ class Info extends Component{
   render() {
       return (
         <div>
-       <p></p>
+       <p>{this.state.CO2}</p>
         <div>
      
         </div>

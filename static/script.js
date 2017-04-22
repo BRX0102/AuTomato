@@ -13677,11 +13677,14 @@ var Info = function (_Component) {
   function Info(props) {
     _classCallCheck(this, Info);
 
-    return _possibleConstructorReturn(this, (Info.__proto__ || Object.getPrototypeOf(Info)).call(this, props));
-    //this.state = {
-    //   CO2:PropTypes.string
+    var _this = _possibleConstructorReturn(this, (Info.__proto__ || Object.getPrototypeOf(Info)).call(this, props));
 
-    //};
+    _this.state = {
+      CO2: ""
+
+    };
+    _this._CO2 = _this._CO2.bind(_this);
+    return _this;
   }
 
   _createClass(Info, [{
@@ -13695,8 +13698,9 @@ var Info = function (_Component) {
   }, {
     key: '_CO2',
     value: function _CO2(data) {
-      //this.state.CO2=data
-      console.log("hello");
+      console.log(data);
+      this.setState({ CO2: data });
+      //console.log("hello");
     }
   }, {
     key: 'callStuff',
@@ -13711,7 +13715,11 @@ var Info = function (_Component) {
       return _react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement('p', null),
+        _react2.default.createElement(
+          'p',
+          null,
+          this.state.CO2
+        ),
         _react2.default.createElement('div', null),
         _react2.default.createElement(
           'div',
