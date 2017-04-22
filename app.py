@@ -20,7 +20,7 @@ def on_connect():
 @socketio.on('co2')
 def on_co2():
  hello="hello"
- socketio.emit('co2Client',hello)
+ socketio.emit('co2Client',hello, broadcast=True)
    
 @socketio.on('disconnect')
 def on_disconnect():
@@ -32,6 +32,6 @@ if __name__ == '__main__':# __name__!
  socketio.run(
  app,
  host=os.getenv('IP', '0.0.0.0'),
- port=int(os.getenv('PORT', 8080)),
+ port=int(os.getenv('PORT', 8008)),
  debug=True
  )
