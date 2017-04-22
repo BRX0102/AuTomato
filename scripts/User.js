@@ -1,6 +1,6 @@
 import React,{Component } from 'react';
 import * as SocketIO from 'socket.io-client';
-
+import PropTypes from 'prop-types';
 
 
 var ReactDOM = require('react-dom');
@@ -15,11 +15,12 @@ var socket = SocketIO.connect();
 
 class Info extends Component{
  constructor(props) {
-    super(props);
-    this.state = {
-      CO2:"",moisture:"",heat:""
+   super(props);
+    //this.state = {
+   //   CO2:PropTypes.string
       
-    };
+    //};
+   
   }
  
 
@@ -34,7 +35,8 @@ class Info extends Component{
   }
   _CO2(data)
   {
-    this.state.CO2=data;
+  //this.state.CO2=data
+  console.log("hello");
     
   }
 
@@ -50,10 +52,10 @@ class Info extends Component{
         <div>
        
         <div>
-        <p>{this.state.CO2}</p>
+     
         </div>
         <div>
-        <button type="button" onClick={this.callStuff()}>Click Me!</button>
+        <button type="button" onClick={(e) => this.handleClick(e)}>Click Me!</button>
         </div>
         
         

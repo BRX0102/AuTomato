@@ -1,3 +1,4 @@
+process.traceDeprecation = true
 module.exports = {
     entry: "./scripts/Main.js",
     output: {
