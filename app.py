@@ -11,7 +11,7 @@ socketio = flask_socketio.SocketIO(app)
    
 @app.route('/')
 def hello():
- return "this shit is running bruh!")
+ return "this shit is running bruh!"
 
 @socketio.on('connect')
 def on_connect():
