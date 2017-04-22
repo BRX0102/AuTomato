@@ -20,6 +20,8 @@ class Info extends Component{
     CO2:""
       
     };
+    //added new line of code to bind the state variable before it is used
+    //autobinding is disabled
    this._CO2= this._CO2.bind(this)
   }
  
