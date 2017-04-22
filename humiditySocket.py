@@ -27,7 +27,12 @@ while 1:
     #temperature and humidity
     data1 = ser.readline()
     data2 = ser.readline()
+    data3 = ser.readline()
+    
     socketIO.emit('co2',data1)
     socketIO.emit('co2',data2)
+    socketIO.emit('co2',data3)
+    #socketIO.emit('co2',"shits good fam")
+    time.sleep(5)
     # read the serial data sent by the UNO
     # print the serial data sent by UNO
