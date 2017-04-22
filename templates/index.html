@@ -1,0 +1,32 @@
+<html>
+    <head>
+    </head>
+    <body>
+     
+        <div id="Fbutton"></div>
+        <div id="googleButton"></div>
+ <script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '101547387036328',
+      xfbml      : true,
+      version    : 'v2.8'
+    });
+    FB.AppEvents.logPageView();
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+<div id="content"></div>        
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='App.css') }}">
+        <script type="text/javascript" src="/static/script.js"></script>
+ <audio id="audio" src="{{ url_for('static', filename='sound.mp3') }}" ></audio>
+
+    </body>
+</html>
