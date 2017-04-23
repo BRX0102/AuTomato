@@ -1,6 +1,7 @@
 from socketIO_client import SocketIO, LoggingNamespace
 import time
 import serial
+import json
 
 
 def on_connect():
@@ -29,10 +30,17 @@ while 1:
     data2 = ser.readline()
     data3 = ser.readline()
     
-    socketIO.emit('co2',data1)
-    socketIO.emit('co2',data2)
-    socketIO.emit('co2',data3)
+    temp = """"""
+    temp = temp + data1
+    temp = temp + data2
+    temp = temp + data3
+    
+    # socketIO.emit('co2',data1)
+    # socketIO.emit('co2',data2)
+    # socketIO.emit('co2',data3)
     #socketIO.emit('co2',"shits good fam")
+    
+    # socketIO.emit('co2',data3)
     time.sleep(5)
     # read the serial data sent by the UNO
     # print the serial data sent by UNO
