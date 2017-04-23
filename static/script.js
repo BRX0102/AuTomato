@@ -13685,7 +13685,8 @@ var Info = function (_Component) {
 
     _this.state = {
       CO2: "",
-      temp: "30"
+      temp: "30",
+      humidity: "10"
     };
     //added new line of code to bind the state variable before it is used
     //autobinding is disabled
@@ -13705,8 +13706,20 @@ var Info = function (_Component) {
     key: '_CO2',
     value: function _CO2(data) {
       console.log(data);
-      this.setState({ CO2: data, temp: 50 });
+      var rand2 = this._getRandom();
+      var temp1 = this.state.temp;
+      temp1 = parseInt(temp1) + 1;
+      this.setState({
+        CO2: data,
+        temp: temp1,
+        humidity: rand2
+      });
       //console.log("hello");
+    }
+  }, {
+    key: '_getRandom',
+    value: function _getRandom() {
+      return Math.floor(Math.random() * 99 + 1);
     }
   }, {
     key: 'callStuff',
@@ -13722,34 +13735,97 @@ var Info = function (_Component) {
         'div',
         null,
         _react2.default.createElement(
-          'p',
-          null,
-          this.state.CO2
-        ),
-        _react2.default.createElement(
           'div',
-          { className: 'col-md-2 col-md-offset-5' },
-          _react2.default.createElement(_reactThermometer2.default, {
-            min: 30,
-            max: 100,
-            width: 20,
-            height: 300,
-            backgroundColor: 'blue',
-            fillColor: 'green',
-            current: this.state.temp
-          })
-        ),
-        _react2.default.createElement(
-          'div',
-          null,
+          { className: 'panel panel-default col-md-2 col-xs-2 col-md-offset-3' },
           _react2.default.createElement(
-            'button',
-            { type: 'button', onClick: function onClick(e) {
-                return _this2.callStuff(e);
-              } },
-            'Click Me!'
+            'div',
+            { className: 'panel-heading' },
+            _react2.default.createElement(
+              'h3',
+              { className: 'panel-title' },
+              'Temperature'
+            )
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'panel-body' },
+            _react2.default.createElement(
+              'div',
+              { className: 'col-md-2 col-xs-2 col-md-offset-3' },
+              _react2.default.createElement(_reactThermometer2.default, {
+                min: 30,
+                max: 130,
+                width: 20,
+                height: 200,
+                backgroundColor: 'blue',
+                fillColor: 'green',
+                current: this.state.temp
+              })
+            )
+          ),
+          _react2.default.createElement(
+            'p',
+            null,
+            'The Temperature is currently: ',
+            this.state.temp
           )
-        )
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'panel panel-default col-md-2 col-xs-2' },
+          _react2.default.createElement(
+            'div',
+            { className: 'panel-heading' },
+            _react2.default.createElement(
+              'h3',
+              { className: 'panel-title' },
+              'Humidity'
+            )
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'panel-body' },
+            _react2.default.createElement(
+              'div',
+              { className: 'col-md-2 col-xs-2' },
+              _react2.default.createElement(
+                'p',
+                null,
+                'The humidity is currently: ',
+                this.state.humidity
+              )
+            )
+          )
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'panel panel-default col-md-2 col-xs-2' },
+          _react2.default.createElement(
+            'div',
+            { className: 'panel-heading' },
+            _react2.default.createElement(
+              'h3',
+              { className: 'panel-title' },
+              'Humidity'
+            )
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'panel-body' },
+            _react2.default.createElement(
+              'div',
+              { className: 'col-md-2 col-md-offset-3 col-xs-2 col-xs-offset-3' },
+              _react2.default.createElement(
+                'button',
+                { type: 'button', onClick: function onClick(e) {
+                    return _this2.callStuff(e);
+                  } },
+                'Click Me!'
+              )
+            )
+          )
+        ),
+        _react2.default.createElement('div', { className: 'row' })
       );
     }
   }]);

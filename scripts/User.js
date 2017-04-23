@@ -19,7 +19,8 @@ class Info extends Component{
    super(props);
     this.state = {
     CO2:"",
-    temp: "30"
+    temp: "30",
+    humidity: "10"
     };
     //added new line of code to bind the state variable before it is used
     //autobinding is disabled
@@ -38,9 +39,19 @@ class Info extends Component{
   }
   _CO2(data){
     console.log(data);
-  this.setState({ CO2:data, temp:50 });
+    let rand2 = this._getRandom();
+    let temp1 = this.state.temp;
+    temp1 = parseInt(temp1)+1;
+    this.setState({ 
+      CO2:data,
+      temp: temp1,
+      humidity: rand2
+    });
   //console.log("hello");
     
+  }
+  _getRandom(){
+    return Math.floor(Math.random() * 99 + 1);
   }
 
   callStuff()
@@ -53,20 +64,44 @@ class Info extends Component{
   render() {
       return (
         <div>
-       <p>{this.state.CO2}</p>
-       <div className="col-md-2 col-md-offset-5">
-      		<Thermometer
-      				min={30}
-      				max={100}
-      				width={20}
-      				height={300}
-      				backgroundColor={'blue'}
-      				fillColor={'green'}
-      				current={this.state.temp}
-      		/>
+        <div className="panel panel-default col-md-2 col-xs-2 col-md-offset-3">
+          <div className="panel-heading"><h3 className="panel-title">Temperature</h3></div>
+          <div className="panel-body">
+            <div className="col-md-2 col-xs-2 col-md-offset-3">
+              		<Thermometer
+              				min={30}
+              				max={130}
+              				width={20}
+              				height={200}
+              				backgroundColor={'blue'}
+              				fillColor={'green'}
+              				current={this.state.temp}
+              		/>
+              	</div>
+          </div>
+          <p>The Temperature is currently: {this.state.temp}</p>
         </div>
-        <div>
-        <button type="button" onClick={(e) => this.callStuff(e)}>Click Me!</button>
+        
+        <div className="panel panel-default col-md-2 col-xs-2">
+            <div className="panel-heading"><h3 className="panel-title">Humidity</h3></div>
+            <div className="panel-body">
+              <div className="col-md-2 col-xs-2">
+            		<p>The humidity is currently: {this.state.humidity}</p>
+            	</div>
+            </div>
+
+            
+        </div>
+        <div className="panel panel-default col-md-2 col-xs-2">
+          <div className="panel-heading"><h3 className="panel-title">Humidity</h3></div>
+            <div className="panel-body">
+              <div className="col-md-2 col-md-offset-3 col-xs-2 col-xs-offset-3">
+                <button type="button" onClick={(e) => this.callStuff(e)}>Click Me!</button>
+              </div>
+            </div>
+          </div>
+        <div className="row">
+        
         </div>
         </div>
         
