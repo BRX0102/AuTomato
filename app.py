@@ -11,7 +11,7 @@ socketio = flask_socketio.SocketIO(app)
    
 @app.route('/')
 def hello():
- return "this shit is running bruh!"
+ return "happy tomato day"
 
 @socketio.on('connect')
 def on_connect():
@@ -20,8 +20,9 @@ def on_connect():
 @socketio.on('co2')
 def on_co2(data):
  #hello="hello"
- hello = str(data)
- socketio.emit('co2Client',hello, broadcast=True)
+ #hello = str(data)
+ #print hello
+ socketio.emit('co2Client',data, broadcast=True)
    
 @socketio.on('disconnect')
 def on_disconnect():

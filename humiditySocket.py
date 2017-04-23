@@ -27,18 +27,28 @@ ser = serial.Serial('/dev/ttyACM0', 9600)
 while 1:
     #temperature and humidity
     data1 = ser.readline()
+    data1 = data1.replace("\n", " ")
+    data1 = data1.replace("'", "\"")
     data2 = ser.readline()
+    data2 = data2.replace("\n", " ")
+    data2 = data2.replace("'", "\"")
     data3 = ser.readline()
+    data3 = data3.replace("\n", " ")
+    data3 = data3.replace("'", "\"")
     
-    temp = """"""
-    temp = temp + data1
-    temp = temp + data2
-    temp = temp + data3
     
-    # socketIO.emit('co2',data1)
-    # socketIO.emit('co2',data2)
-    # socketIO.emit('co2',data3)
-    #socketIO.emit('co2',"shits good fam")
+    temp = """{"""
+    temp = temp + data1 + ","
+    temp = temp + data2 + ","
+    temp = temp + data3 + ","
+    temp = temp + """}"""
+    
+    newData = json.loads(temp)
+    #socketIO.emit('co2',data1)
+    #socketIO.emit('co2',data2)
+    #socketIO.emit('co2',data3)
+    asString = json.dumps(newData)
+    socketIO.emit('co2',asString)
     
     # socketIO.emit('co2',data3)
     time.sleep(5)
