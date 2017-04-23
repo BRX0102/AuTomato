@@ -13683,6 +13683,8 @@ var Info = function (_Component) {
       CO2: ""
 
     };
+    //added new line of code to bind the state variable before it is used
+    //autobinding is disabled
     _this._CO2 = _this._CO2.bind(_this);
     return _this;
   }
@@ -13720,7 +13722,41 @@ var Info = function (_Component) {
           null,
           this.state.CO2
         ),
-        _react2.default.createElement('div', null),
+        _react2.default.createElement(
+          'div',
+          { className: 'container-fluid' },
+          _react2.default.createElement(
+            'ul',
+            { className: 'nav nav-tabs' },
+            _react2.default.createElement(
+              'li',
+              { role: 'presentation', className: 'active' },
+              _react2.default.createElement(
+                'a',
+                { href: '#' },
+                'Home'
+              )
+            ),
+            _react2.default.createElement(
+              'li',
+              { role: 'presentation' },
+              _react2.default.createElement(
+                'a',
+                { href: '#' },
+                'Profile'
+              )
+            ),
+            _react2.default.createElement(
+              'li',
+              { role: 'presentation' },
+              _react2.default.createElement(
+                'a',
+                { href: '#' },
+                'Messages'
+              )
+            )
+          )
+        ),
         _react2.default.createElement(
           'div',
           null,
