@@ -1,6 +1,7 @@
 import React,{Component } from 'react';
 import * as SocketIO from 'socket.io-client';
 import PropTypes from 'prop-types';
+import Thermometer from "react-thermometer";
 
 
 var ReactDOM = require('react-dom');
@@ -17,8 +18,8 @@ class Info extends Component{
  constructor(props) {
    super(props);
     this.state = {
-    CO2:""
-      
+    CO2:"",
+    temp: "30"
     };
     //added new line of code to bind the state variable before it is used
     //autobinding is disabled
@@ -37,7 +38,7 @@ class Info extends Component{
   }
   _CO2(data){
     console.log(data);
-  this.setState({ CO2:data });
+  this.setState({ CO2:data, temp:50 });
   //console.log("hello");
     
   }
@@ -53,22 +54,20 @@ class Info extends Component{
       return (
         <div>
        <p>{this.state.CO2}</p>
-        <div className="container-fluid">
-          <ul className="nav nav-tabs">
-            <li role="presentation" className="active"><a href="#">Home</a></li>
-            <li role="presentation"><a href="#">Profile</a></li>
-            <li role="presentation"><a href="#">Messages</a></li>
-          </ul>
+       <div className="col-md-2 col-md-offset-5">
+      		<Thermometer
+      				min={30}
+      				max={100}
+      				width={20}
+      				height={300}
+      				backgroundColor={'blue'}
+      				fillColor={'green'}
+      				current={this.state.temp}
+      		/>
         </div>
         <div>
         <button type="button" onClick={(e) => this.callStuff(e)}>Click Me!</button>
         </div>
-        
-        
-        
-        
-        
-        
         </div>
         
       );
@@ -96,7 +95,6 @@ class GiveMeACat extends Component {
     );
   }
 }
-
 
 export class Chat extends React.Component {
   render() {

@@ -13655,6 +13655,10 @@ var _propTypes = __webpack_require__(143);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
+var _reactThermometer = __webpack_require__(239);
+
+var _reactThermometer2 = _interopRequireDefault(_reactThermometer);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -13680,8 +13684,8 @@ var Info = function (_Component) {
     var _this = _possibleConstructorReturn(this, (Info.__proto__ || Object.getPrototypeOf(Info)).call(this, props));
 
     _this.state = {
-      CO2: ""
-
+      CO2: "",
+      temp: "30"
     };
     //added new line of code to bind the state variable before it is used
     //autobinding is disabled
@@ -13701,7 +13705,7 @@ var Info = function (_Component) {
     key: '_CO2',
     value: function _CO2(data) {
       console.log(data);
-      this.setState({ CO2: data });
+      this.setState({ CO2: data, temp: 50 });
       //console.log("hello");
     }
   }, {
@@ -13724,38 +13728,16 @@ var Info = function (_Component) {
         ),
         _react2.default.createElement(
           'div',
-          { className: 'container-fluid' },
-          _react2.default.createElement(
-            'ul',
-            { className: 'nav nav-tabs' },
-            _react2.default.createElement(
-              'li',
-              { role: 'presentation', className: 'active' },
-              _react2.default.createElement(
-                'a',
-                { href: '#' },
-                'Home'
-              )
-            ),
-            _react2.default.createElement(
-              'li',
-              { role: 'presentation' },
-              _react2.default.createElement(
-                'a',
-                { href: '#' },
-                'Profile'
-              )
-            ),
-            _react2.default.createElement(
-              'li',
-              { role: 'presentation' },
-              _react2.default.createElement(
-                'a',
-                { href: '#' },
-                'Messages'
-              )
-            )
-          )
+          { className: 'col-md-2 col-md-offset-5' },
+          _react2.default.createElement(_reactThermometer2.default, {
+            min: 30,
+            max: 100,
+            width: 20,
+            height: 300,
+            backgroundColor: 'blue',
+            fillColor: 'green',
+            current: this.state.temp
+          })
         ),
         _react2.default.createElement(
           'div',
@@ -30892,6 +30874,119 @@ function toArray(list, index) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 239 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _react = __webpack_require__(38);
+
+var _react2 = _interopRequireDefault(_react);
+
+var Thermometer = function Thermometer(_ref) {
+  var min = _ref.min;
+  var max = _ref.max;
+  var current = _ref.current;
+  var fillColor = _ref.fillColor;
+  var backgroundColor = _ref.backgroundColor;
+  var height = _ref.height;
+  var width = _ref.width;
+
+  var totalHeight = height + width * 2.5;
+  var bubbleHeight = width * 2.5;
+  var unitOfMovement = totalHeight / (max - min);
+  var percentageFilled = current / (max - min);
+  var pixelsToFill = totalHeight * percentageFilled;
+  var bubblePixelsToFill = undefined;
+  var restPixelsToFill = undefined;
+  if (pixelsToFill < bubbleHeight) {
+    bubblePixelsToFill = pixelsToFill;
+    restPixelsToFill = 0;
+  } else {
+    bubblePixelsToFill = bubbleHeight;
+    restPixelsToFill = pixelsToFill - bubblePixelsToFill;
+  }
+  var marginLeft = (width - 20) / 10 * 7.5;
+  var style = {
+    backgroundColor: backgroundColor,
+    height: height,
+    width: width,
+    borderRadius: '100px 100px 0 0',
+    padding: 1,
+    marginLeft: marginLeft,
+    position: 'relative'
+  };
+
+  var fillStyle = {
+    backgroundColor: fillColor,
+    borderRadius: 100,
+    width: width,
+    position: 'absolute',
+    bottom: 5,
+    zIndex: 3,
+    height: restPixelsToFill
+  };
+
+  var bubbleStyle = {
+    backgroundColor: backgroundColor,
+    borderRadius: 100,
+    height: width * 2.5,
+    width: width * 2.5,
+    padding: 1,
+    position: 'relative',
+    top: -width,
+    right: 15,
+    zIndex: 1
+  };
+
+  var bubbleBorderRadius = undefined;
+  var unitsOfMovementToCenter = Math.floor(bubbleHeight / 2 / unitOfMovement);
+  var startingWidth = bubbleHeight * 0.4;
+  var widthIncreasePerMovement = (bubbleHeight - startingWidth) / unitsOfMovementToCenter;
+  var bubbleFillWidth = current >= unitsOfMovementToCenter ? width * 2.5 : current * widthIncreasePerMovement + startingWidth;
+  var bubbleFillMarginLeft = (bubbleHeight - bubbleFillWidth) / 2;
+  var shouldUseCompleteBorderRadius = bubblePixelsToFill / bubbleHeight >= 0.8;
+  if (shouldUseCompleteBorderRadius) {
+    bubbleBorderRadius = 100;
+  } else {
+    bubbleBorderRadius = '0 0 100px 100px';
+  }
+  var bubbleFill = {
+    backgroundColor: fillColor,
+    borderRadius: bubbleBorderRadius,
+    height: bubblePixelsToFill,
+    marginTop: bubbleHeight - bubblePixelsToFill,
+    marginLeft: bubbleFillMarginLeft,
+    width: bubbleFillWidth,
+    zIndex: 2
+  };
+  return _react2['default'].createElement(
+    'div',
+    null,
+    _react2['default'].createElement(
+      'div',
+      { style: style },
+      _react2['default'].createElement('div', { style: fillStyle })
+    ),
+    _react2['default'].createElement(
+      'div',
+      { style: bubbleStyle },
+      _react2['default'].createElement('div', { style: bubbleFill })
+    )
+  );
+};
+
+exports['default'] = Thermometer;
+module.exports = exports['default'];
 
 /***/ })
 /******/ ]);
