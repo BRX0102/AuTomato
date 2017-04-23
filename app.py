@@ -23,7 +23,7 @@ def on_connect():
 def on_co2(data):
  hello=data
  print(hello)
- socketio.emit('co2Client',hello)
+ socketio.emit('co2Client',hello,broadcast=all)
    
 
   
