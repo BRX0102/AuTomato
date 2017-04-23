@@ -20,8 +20,9 @@ def on_connect():
  print "%s USER CONNECTED " %  flask.request.sid
 
 @socketio.on('co2')
-def on_co2():
- hello="hello"
+def on_co2(data):
+ hello=data
+ print(hello)
  socketio.emit('co2Client',hello)
    
 
