@@ -27,6 +27,8 @@ while 1:
     #water sensor
     data1 = ser.readline()
     if '\n' in data1:
-        print data1.split()[0]#temperature and humidity
-        socketIO.emit('water',data1)
-    socketIO.wait(seconds=5)
+        data1 = data1.split()[0]
+        if int(data1) >= 100 and int(data1)<1000:
+            socketIO.emit('water',data1)
+            print data1
+    socketIO.wait(seconds=1)
