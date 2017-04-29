@@ -2,14 +2,16 @@
 import flask_sqlalchemy, app
 
 
-# app.app = app module’s app variable
-app.app.config['SQLALCHEMY_DATABASE_URI'] = 
- 'postgresql://brandan:blockwood@localhost/postgres'
+# app.app = app module's app variable
+app.app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://brandan:blockwood@localhost/postgres'
 db = flask_sqlalchemy.SQLAlchemy(app.app)
 
-class ChatMessage(db.Model):
- latiude = db.Column(db.Real)
- longitude = db.Column(db.Real)
+#db.create_all()
+class ClosedRoads(db.Model):
+ __tablename__ = 'closedroads'
+ id = db.Column(db.Integer, primary_key=True)  # key
+ latiude = db.Column(db.Float)
+ longitude = db.Column(db.Float)
  status = db.Column(db.Integer)
  
 
@@ -19,4 +21,4 @@ class ChatMessage(db.Model):
     self.status=status
 
  def __repr__(self): # what's __repr__?
-    return '<Message: %d %d %d>' % (self.latiude,self.longitude,self.status)
+    return '<latiude: %d, Longitude: %d,status: %d>' % (self.latiude,self.longitude,self.status)

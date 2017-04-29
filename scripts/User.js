@@ -1,4 +1,4 @@
-import React,{Component } from 'react';
+import React,{Component} from 'react';
 import * as SocketIO from 'socket.io-client';
 import PropTypes from 'prop-types';
 import Thermometer from "react-thermometer";
@@ -13,7 +13,24 @@ var socket = SocketIO.connect();
       });
   
 
+class Button extends Component {
+    handleSubmit(event) {
+        event.preventDefault();
 
+        let random = Math.floor(Math.random() * 100);
+        console.log('Generated a random number: ', random);
+        socket.emit('readData');
+        console.log('Sent up the random number to server!');
+    }
+
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <button>Send up a random number!</button>
+            </form>
+        );
+    }
+}
 class Info extends Component{
  constructor(props) {
    super(props);
@@ -127,7 +144,9 @@ class Info extends Component{
             </div>
           </div>
         </div>
-        
+        <div>
+        <Button/>
+        </div>
         <div className="panel panel-default col-md-2 col-xs-2">
             <div className="panel-heading row"><h3 className="panel-title">Humidity</h3></div>
             <div className="panel-body">

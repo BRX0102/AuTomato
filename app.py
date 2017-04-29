@@ -3,18 +3,24 @@ import os, flask, flask_socketio,requests
 from flask import request
 from flask_socketio import emit,send
 import json
+import flask_sqlalchemy
 
 app = flask.Flask(__name__)
 
-
+# app.app = app module's app variable
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://brandan:blockwood@localhost/postgres'
+import models
+db = flask_sqlalchemy.SQLAlchemy(app)
 socketio = flask_socketio.SocketIO(app)
 
 
-import models
-   
+
+
 @app.route('/')
 def hello():
  return flask.render_template('index.html')
+ 
+
 
 @socketio.on('connect')
 def on_connect():
@@ -33,6 +39,10 @@ def on_co2(data):
  socketio.emit('co2Client',hello,broadcast=all)
    
 
+@socketio.on('readData')
+def read_data():
+ items =models.ClosedRoads.query.all()
+ print items
   
 @socketio.on('disconnect')
 def on_disconnect():
