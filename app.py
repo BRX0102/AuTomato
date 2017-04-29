@@ -20,7 +20,12 @@ def hello():
 def on_connect():
  print "%s USER CONNECTED " %  flask.request.sid
 
-@socketio.on('co2')
+@socketio.on_error_default
+def default_error_handler(e):
+    print(request.event["message"]) # "my error event"
+    print(request.event["args"])    # (data,)
+    
+@socketio.on('water')
 def on_co2(data):
  hello=data
  print(hello)
