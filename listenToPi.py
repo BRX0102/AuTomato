@@ -6,13 +6,24 @@ import json
 ser = serial.Serial('/dev/ttyACM0', 9600)
 # execute the loop forever
 while 1:
-    temp = """"""
     #temperature and humidity
     data1 = ser.readline()
+    data1 = data1.replace("\n", " ")
+    data1 = data1.replace("'", "\"")
     data2 = ser.readline()
+    data2 = data2.replace("\n", " ")
+    data2 = data2.replace("'", "\"")
     data3 = ser.readline()
+    data3 = data3.replace("\n", " ")
+    data3 = data3.replace("'", "\"")
     
-    temp = """"""
-    temp = temp + data1
-    temp = temp + data2
-    temp = temp + data3
+    print data1
+    print data2
+    print data3
+    
+    #newData = json.loads(temp)
+    #socketIO.emit('co2',data1)
+    #socketIO.emit('co2',data2)
+    #socketIO.emit('co2',data3)
+    #asString = json.dumps(newData)
+
