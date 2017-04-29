@@ -20,6 +20,7 @@ def hello():
 def on_connect():
  print "%s USER CONNECTED " %  flask.request.sid
 
+#why heroku why
 @socketio.on_error_default
 def default_error_handler(e):
     print(request.event["message"]) # "my error event"
