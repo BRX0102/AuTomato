@@ -24,7 +24,9 @@ socketIO.on('connect', on_connect)
 ser = serial.Serial('/dev/ttyACM0', 9600)
 # execute the loop forever
 while 1:
-    #temperature and humidity
+    #water sensor
     data1 = ser.readline()
-    socketIO.emit('water',data1)
+    if '\n' in data1:
+        print data1.split()[0]#temperature and humidity
+        socketIO.emit('water',data1)
     socketIO.wait(seconds=5)

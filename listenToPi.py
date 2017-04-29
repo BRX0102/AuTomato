@@ -8,4 +8,5 @@ ser = serial.Serial('/dev/ttyACM0', 9600)
 while 1:
     #temperature and humidity
     data1 = ser.readline()
-    print data1
+    if '\n' in data1:
+        print data1.split()[0]
