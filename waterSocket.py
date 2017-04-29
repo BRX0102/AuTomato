@@ -16,9 +16,6 @@ def on_disconnect():
 def on_reconnect():
     print('reconnect')
 
-def on_aaa_response(*args):
-    print('on_aaa_response', args)
-
 socketIO = SocketIO('http://shielded-brushlands-57140.herokuapp.com', verify=False)
 
 socketIO.on('connect', on_connect)
@@ -29,5 +26,5 @@ socketIO.on('connect', on_connect)
 while 1:
 #    #temperature and humidity
 #    data1 = ser.readline()
-    socketIO.emit('co2','hello brandan')
+    socketIO.emit('water','hello brandan')
     socketIO.wait(seconds=5)
