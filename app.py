@@ -10,7 +10,7 @@ app = flask.Flask(__name__)
 socketio = flask_socketio.SocketIO(app)
 
 
-
+import models
    
 @app.route('/')
 def hello():
