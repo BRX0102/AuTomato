@@ -24,12 +24,23 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.net.URISyntaxException;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+
 //hashmaps-allday
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks
         , GoogleApiClient.OnConnectionFailedListener
         , LocationListener {
 
-    private final String TAG = MapsActivity.class.getSimpleName();
+    //SocketIO
+    ///////////////////////////////////////////////////////
+    private Socket mSocket;
+    ///////////////////////////////////////////////////////
+
+    private final String TAG = "MapsActivity";
 
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
@@ -42,6 +53,44 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationRequest mLocationRequest;
     private double currentLatitude;
     private double currentLongitude;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //INIT SOCKETIO
+        ///////////////////////////////////
+        //AuTomatoApplication app = (AuTomatoApplication) getApplication();
+        //mSocket = app.getSocket();
+
+        try {
+            mSocket = IO.socket("https://shielded-brushlands-57140.herokuapp.com/");
+
+            mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+                    mSocket.emit("water", "code is life");
+                    mSocket.disconnect();
+                }
+
+            }).on("event", new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {}
+
+            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {}
+
+            });
+            mSocket.connect();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
     ////////////////////////////////////////////////////////
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -235,6 +284,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void ToastIt(String aString) {
         Toast.makeText(getApplicationContext(),
                 aString, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
     }
 
     @Override
