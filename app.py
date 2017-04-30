@@ -70,7 +70,7 @@ def sendMessage(data):
     # Create the root message and fill in the from, to, and subject headers
     msgRoot['From'] = strFrom
     msgRoot['To'] = strTo
-    msg = 'Alert at'+data
+    msg = 'Alert at '+data
     #start emailing
     server = smtplib.SMTP( "smtp.gmail.com", 587 )
     # Send the email (this example assumes SMTP authentication is required)
