@@ -25,10 +25,11 @@
 
     <Spinner
         android:id="@+id/roadSpinner"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/markTV" />
+        android:layout_below="@+id/markTV"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:id="@+id/markTV"
@@ -47,6 +48,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/roadSpinner"
-        android:text="delete" />
+        android:text="Delete Location" />
 
 </RelativeLayout>
