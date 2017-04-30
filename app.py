@@ -48,6 +48,7 @@ def point_on_map(data):
  point=models.ClosedRoads(data['latitude'],data['longitude'],data['blockType'])
  models.db.session.add(userAdd)
  models.db.session.commit()
+ socketio.emit('co2Client',data,broadcast=all)
  #socketio.emit('markEndPointSuccess',{"status":"Success"})
  
  
