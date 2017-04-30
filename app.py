@@ -42,11 +42,11 @@ def read_data():
  
 @socketio.on('markEndPoint')
 def point_on_map(data):
-
+ print data 
  print data['latitude']
  print data['longitude']
  print data['blockType']
- point=models.ClosedRoads(data['latitude'],data['longitude'],data['blockType'])
+ point=models.ClosedRoads(float(data['latitude']),float(data['longitude']),int(data['blockType']))
  models.db.session.add(point)
  models.db.session.commit()
  socketio.emit('newPoint',{"latitude":data["latitude"],"longitude":data["longitude"],"blockType":data["blockType"]})

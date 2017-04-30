@@ -28,4 +28,4 @@ class ClosedRoads(db.Model):
    
 
  def __repr__(self): # what's __repr__?
-    return '<latiude: %d, Longitude: %d,status: %d>' % (self.latiude,self.longitude,self.status)
+    return '<latitude: %d, Longitude: %d,status: %d>' % (self.latiude,self.longitude,self.status)
