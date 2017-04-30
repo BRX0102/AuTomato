@@ -38,7 +38,7 @@ def on_co2(data):
 @socketio.on('readData')
 def read_data():
  print os.getenv('DATABASE_URL')
- socketio.emit('coordinates',{"items":[item.json() for item in models.ClosedRoads.query.all()]},broadcast=all)
+ socketio.emit('coordinates',{"items":[item.json() for item in models.ClosedRoads.query.all()]})
  
 @socketio.on('markEndPoint')
 def point_on_map(data):
