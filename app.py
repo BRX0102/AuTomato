@@ -75,6 +75,7 @@ def point_on_map(data):
 
 @socketio.on('deleteLocation')
 def delete_location(data):
+ print data
  items=models.ClosedRoads.filter(models.ClosedRoads.latiude==data["latitude"],models.ClosedRoads.longitude==data["longitude"]).all()
  models.db.session.delete(items)        
  models.db.session.commit()
