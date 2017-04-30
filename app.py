@@ -4,11 +4,16 @@ from flask import request
 from flask_socketio import emit,send
 import json
 import flask_sqlalchemy
-
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
+from email.MIMEImage import MIMEImage
+import smtplib
+from sqlalchemy import or_, and_
 app = flask.Flask(__name__)
 
 # app.app = app module's app variable
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+#app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql://brandan:blockwood@localhost/postgres'
 import models
 db = flask_sqlalchemy.SQLAlchemy(app)
 socketio = flask_socketio.SocketIO(app)
@@ -33,13 +38,49 @@ def on_co2(data):
  hello=data
  print(hello)
  socketio.emit('co2Client',hello,broadcast=all)
-   
+  
+
 
 @socketio.on('readData')
 def read_data():
  print os.getenv('DATABASE_URL')
  socketio.emit('coordinates',{"items":[item.json() for item in models.ClosedRoads.query.all()]})
  
+ 
+@socketio.on('initalData')
+def intial_graph_data():
+ socketio.emit('initData',{"sensorInfo":[item.json() for item in models.sensors.query.all()]})
+ 
+@socketio.on('markForGraph')
+def point_on_map(data):
+ print data 
+ print data['latitude']
+ print data['longitude']
+ print data['status']
+ info=int(data["status"])
+ if info<450:
+  #wet
+  data["status"]=0
+ elif info>450 and info<490:
+  #wet 
+  data["status"]=1
+ elif info>490:
+  data["status"]=2
+  
+ point=models.sensors(float(data['latitude']),float(data['longitude']),int(data['status']))
+ models.db.session.add(point)
+ models.db.session.commit()
+ socketio.emit('graph',{"sensorInfo":[item.json() for item in models.sensors.query.all()]})
+ socketio.emit('co2Client',data,broadcast=all)
+
+@socketio.on('deleteLocation')
+def delete_location(data):
+ print data
+ items=models.ClosedRoads.filter(and_(models.ClosedRoads.latiude==float(data["latitude"]),models.ClosedRoads.longitude==float(data["longitude"]))).all()
+ for i in items:
+  models.db.session.delete(i)        
+ models.db.session.commit()
+ socketio.emit('coordinates',{"items":[item.json() for item in models.ClosedRoads.query.all()]})
 @socketio.on('markEndPoint')
 def point_on_map(data):
  print data 
@@ -55,7 +96,38 @@ def point_on_map(data):
  
  
  print data
- 
+
+@socketio.on('sendText')
+def sendMessage(data):
+    print "I got here tehehe"
+     # Use sms gateway provided by mobile carrier:
+    # at&t:     number@mms.att.net
+    # t-mobile: number@tmomail.net
+    # verizon:  number@vtext.com
+    # sprint:   number@page.nextel.com
+    # Establish a secure session with gmail's outgoing SMTP server using your gmail account4
+    strFrom = os.getenv('email')
+    strTo = str(os.getenv("number"))+"@tmomail.net"
+    # Create the root message and fill in the from, to, and subject headers
+    msgRoot = MIMEMultipart('related')
+    msgRoot['From'] = strFrom
+    msgRoot['To'] = strTo
+    msgRoot.preamble = 'This is a multi-part message in MIME format.'
+    msg = 'Alert at '+data
+    
+    msgAlternative = MIMEMultipart('alternative')
+    msgRoot.attach(msgAlternative)
+    msgText = MIMEText(msg, 'plain')
+    msgAlternative.attach(msgText)
+    #start emailing
+    server = smtplib.SMTP( "smtp.gmail.com", 587 )
+    # Send the email (this example assumes SMTP authentication is required)
+    server.starttls();
+    server.login( os.getenv('email'),os.getenv('password'))
+
+    server.sendmail(strFrom, strTo, msgRoot.as_string())
+    server.quit()
+
 @socketio.on('disconnect')
 def on_disconnect():
  global names
