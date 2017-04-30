@@ -13892,21 +13892,42 @@ socket.on('connect', function () {});
 var Button = function (_Component) {
   _inherits(Button, _Component);
 
-  function Button() {
+  function Button(props) {
     _classCallCheck(this, Button);
 
-    return _possibleConstructorReturn(this, (Button.__proto__ || Object.getPrototypeOf(Button)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (Button.__proto__ || Object.getPrototypeOf(Button)).call(this, props));
+
+    _this.state = {
+      latiude: "",
+      longitude: "30",
+      status: "60"
+    };
+    //added new line of code to bind the state variable before it is used
+    //autobinding is disabled
+    _this._coordinates = _this._coordinates.bind(_this);
+    return _this;
   }
 
   _createClass(Button, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+
+      socket.on('coordinates', this._coordinates);
+    }
+  }, {
     key: 'handleSubmit',
     value: function handleSubmit(event) {
       event.preventDefault();
 
       var random = Math.floor(Math.random() * 100);
       console.log('Generated a random number: ', random);
-      socket.emit('readData');
+      socket.emit('markEndPoint', { 'latitude': 100, 'longitude': 100, 'blockType': 0 });
       console.log('Sent up the random number to server!');
+    }
+  }, {
+    key: '_coordinates',
+    value: function _coordinates(data) {
+      console.log(data);
     }
   }, {
     key: 'render',

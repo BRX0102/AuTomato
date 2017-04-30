@@ -38,9 +38,21 @@ def on_co2(data):
 @socketio.on('readData')
 def read_data():
  print os.getenv('DATABASE_URL')
- items =models.ClosedRoads.query.all()
- print items
-  
+ socketio.emit('coordinates',{"items":[item.json() for item in models.ClosedRoads.query.all()]},broadcast=all)
+ 
+@socketio.on('markEndPoint')
+def point_on_map(data):
+ print data['latitude']
+ print data['longitude']
+ print data['blockType']
+ point=models.ClosedRoads(data['latitude'],data['longitude'],data['blockType'])
+ models.db.session.add(userAdd)
+ models.db.session.commit()
+ socketio.emit('markEndPointSuccess',{"status":"Success"})
+ 
+ 
+ print data
+ 
 @socketio.on('disconnect')
 def on_disconnect():
  global names
