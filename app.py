@@ -107,7 +107,7 @@ def sendMessage(data):
     # sprint:   number@page.nextel.com
     # Establish a secure session with gmail's outgoing SMTP server using your gmail account4
     strFrom = os.getenv('email')
-    strTo = str(os.getenv("number"))+"@mms.att.net"
+    strTo = str(os.getenv("number"))+"@tmomail.net"
     # Create the root message and fill in the from, to, and subject headers
     msgRoot = MIMEMultipart('related')
     msgRoot['From'] = strFrom
