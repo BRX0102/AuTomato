@@ -47,6 +47,9 @@ def read_data():
  socketio.emit('coordinates',{"items":[item.json() for item in models.ClosedRoads.query.all()]})
  
  
+@socketio.on('initalData')
+def intial_graph_data():
+ socketio.emit('initData',{"sensorInfo":[item.json() for item in models.sensors.query.all()]})
 @socketio.on('markForGraph')
 def point_on_map(data):
  print data 
