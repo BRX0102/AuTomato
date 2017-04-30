@@ -8,7 +8,7 @@ from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from email.MIMEImage import MIMEImage
 import smtplib
-
+from sqlalchemy import or_, and_
 app = flask.Flask(__name__)
 
 # app.app = app module's app variable
@@ -76,7 +76,7 @@ def point_on_map(data):
 @socketio.on('deleteLocation')
 def delete_location(data):
  print data
- items=models.ClosedRoads.filter(models.ClosedRoads.latiude==float(data["latitude"]),models.ClosedRoads.longitude==float(data["longitude"])).all()
+ items=models.ClosedRoads.filter(and_(models.ClosedRoads.latiude==float(data["latitude"]),models.ClosedRoads.longitude==float(data["longitude"]))).all()
  models.db.session.delete(items)        
  models.db.session.commit()
  socketio.emit('coordinates',{"items":[item.json() for item in models.ClosedRoads.query.all()]})
