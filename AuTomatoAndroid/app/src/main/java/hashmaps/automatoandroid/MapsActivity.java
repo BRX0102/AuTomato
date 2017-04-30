@@ -62,33 +62,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ///////////////////////////////////
         //AuTomatoApplication app = (AuTomatoApplication) getApplication();
         //mSocket = app.getSocket();
-
-        try {
-            mSocket = IO.socket("https://shielded-brushlands-57140.herokuapp.com/");
-
-            mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-
-                @Override
-                public void call(Object... args) {
-                    mSocket.emit("water", "code is life");
-                    mSocket.disconnect();
-                }
-
-            }).on("event", new Emitter.Listener() {
-
-                @Override
-                public void call(Object... args) {}
-
-            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
-
-                @Override
-                public void call(Object... args) {}
-
-            });
-            mSocket.connect();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        AutomatoAPI api = new AutomatoAPI();
+        api.sendBlockade();
     }
 
     ////////////////////////////////////////////////////////
