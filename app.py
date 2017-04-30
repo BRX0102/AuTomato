@@ -8,9 +8,9 @@ import flask_sqlalchemy
 app = flask.Flask(__name__)
 
 # app.app = app module's app variable
-#app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 import models
-#db = flask_sqlalchemy.SQLAlchemy(app)
+db = flask_sqlalchemy.SQLAlchemy(app)
 socketio = flask_socketio.SocketIO(app)
 
 
@@ -26,11 +26,7 @@ def hello():
 def on_connect():
  print "%s USER CONNECTED " %  flask.request.sid
 
-#why heroku why
-@socketio.on_error_default
-def default_error_handler(e):
-    print(request.event["message"]) # "my error event"
-    print(request.event["args"])    # (data,)
+
     
 @socketio.on('water')
 def on_co2(data):
@@ -41,6 +37,7 @@ def on_co2(data):
 
 @socketio.on('readData')
 def read_data():
+ print os.getenv('DATABASE_URL')
  items =models.ClosedRoads.query.all()
  print items
   
