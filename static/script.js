@@ -14584,7 +14584,7 @@ var Info = function (_Component2) {
           { className: 'row' },
           _react2.default.createElement(
             'div',
-            { className: 'panel panel-default col-md-8 col-xs-8 col-md-offset-2 col-xs-offset-2' },
+            { className: 'panel panel-default col-md-8 col-xs-8 col-md-offset-1 col-xs-offset-1' },
             _react2.default.createElement(
               'div',
               { className: 'panel-heading' },
@@ -14606,6 +14606,24 @@ var Info = function (_Component2) {
             _react2.default.createElement(
               'div',
               { className: 'panel-footer' },
+              'Alert Status: '
+            )
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'panel panel-default col-md-2 col-xs-2' },
+            _react2.default.createElement(
+              'div',
+              { className: 'panel-heading' },
+              _react2.default.createElement(
+                'h3',
+                { className: 'panel-title' },
+                'Current Road Conditions'
+              )
+            ),
+            _react2.default.createElement(
+              'div',
+              { className: 'panel-body' },
               'Legend: ',
               _react2.default.createElement(
                 'div',
@@ -14638,7 +14656,7 @@ var Info = function (_Component2) {
           { className: 'row' },
           _react2.default.createElement(
             'div',
-            { className: 'panel panel-default col-md-8 col-xs-8 col-md-offset-2 col-xs-offset-2' },
+            { className: 'panel panel-default col-md-10 col-xs-10 col-md-offset-1 col-xs-offset-1' },
             _react2.default.createElement(
               'div',
               { className: 'panel-heading' },
@@ -14651,11 +14669,7 @@ var Info = function (_Component2) {
             _react2.default.createElement(
               'div',
               { className: 'panel-body' },
-              _react2.default.createElement(
-                'div',
-                { className: 'madness', style: { width: '100%', height: '400px' } },
-                _react2.default.createElement(_SimpleMap2.default, null)
-              )
+              _react2.default.createElement('div', { className: 'madness', style: { width: '100%', height: '400px' } })
             ),
             _react2.default.createElement(
               'div',
