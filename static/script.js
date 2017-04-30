@@ -14584,14 +14584,14 @@ var Info = function (_Component2) {
           { className: 'row' },
           _react2.default.createElement(
             'div',
-            { className: 'panel panel-default col-md-2 col-xs-2 col-md-offset-2 col-xs-offset-2' },
+            { className: 'panel panel-default col-md-8 col-xs-8 col-md-offset-2 col-xs-offset-2' },
             _react2.default.createElement(
               'div',
               { className: 'panel-heading' },
               _react2.default.createElement(
                 'h3',
                 { className: 'panel-title' },
-                'Temperature'
+                'Current Road Conditions'
               )
             ),
             _react2.default.createElement(
@@ -14599,103 +14599,36 @@ var Info = function (_Component2) {
               { className: 'panel-body' },
               _react2.default.createElement(
                 'div',
-                { className: 'col-md-2 col-xs-2 col-md-offset-3' },
-                _react2.default.createElement(_reactThermometer2.default, {
-                  min: 30,
-                  max: 130,
-                  width: 20,
-                  height: 150,
-                  backgroundColor: 'blue',
-                  fillColor: 'green',
-                  current: this.state.temp
-                })
+                { className: 'madness', style: { width: '100%', height: '400px' } },
+                _react2.default.createElement(_SimpleMap2.default, null)
               )
             ),
             _react2.default.createElement(
               'div',
               { className: 'panel-footer' },
-              'Current Temp: ',
-              this.state.temp,
-              ' \xB0 Fahrenheit'
-            )
-          ),
-          _react2.default.createElement(
-            'div',
-            { className: 'panel panel-default col-md-2 col-xs-2' },
-            _react2.default.createElement(
-              'div',
-              { className: 'panel-heading' },
-              _react2.default.createElement(
-                'h3',
-                { className: 'panel-title' },
-                'Soil Moisture'
-              )
-            ),
-            _react2.default.createElement(
-              'div',
-              { className: 'panel-body' },
-              _react2.default.createElement('img', { src: this._moistureLevel(), className: 'img-thumbnail' })
-            ),
-            _react2.default.createElement(
-              'div',
-              { className: 'panel-footer' },
-              'State: ',
-              this.state.moistureState
-            )
-          ),
-          _react2.default.createElement(
-            'div',
-            { className: 'panel panel-default col-md-2 col-xs-2' },
-            _react2.default.createElement(
-              'div',
-              { className: 'panel-heading' },
-              _react2.default.createElement(
-                'h3',
-                { className: 'panel-title' },
-                'Smoke'
-              )
-            ),
-            _react2.default.createElement(
-              'div',
-              { className: 'panel-body' },
-              _react2.default.createElement('img', { src: this._smokeImage(), className: 'img-thumbnail' }),
+              'Legend: ',
               _react2.default.createElement(
                 'div',
-                { className: 'panel-footer' },
-                'Safe!'
-              )
-            )
-          ),
-          _react2.default.createElement(
-            'div',
-            null,
-            _react2.default.createElement(Button, null)
-          ),
-          _react2.default.createElement(
-            'div',
-            { className: 'panel panel-default col-md-2 col-xs-2' },
-            _react2.default.createElement(
-              'div',
-              { className: 'panel-heading row' },
-              _react2.default.createElement(
-                'h3',
-                { className: 'panel-title' },
-                'Humidity'
-              )
-            ),
-            _react2.default.createElement(
-              'div',
-              { className: 'panel-body' },
+                { id: 'circleGreen' },
+                'Clear'
+              ),
+              ' ',
               _react2.default.createElement(
                 'div',
-                { className: 'col-md-2 col-xs-2 col-md-offset-4' },
-                _react2.default.createElement(
-                  'p',
-                  null,
-                  'Level: ',
-                  this.state.humidityLevel,
-                  '%'
-                )
+                { id: 'circleYellow' },
+                'Trucks'
+              ),
+              ' ',
+              _react2.default.createElement(
+                'div',
+                { id: 'circleOrange' },
+                'Tractors'
+              ),
+              ' ',
+              _react2.default.createElement(
+                'div',
+                { id: 'circleRed' },
+                'Impassable'
               )
             )
           )
@@ -14712,7 +14645,7 @@ var Info = function (_Component2) {
               _react2.default.createElement(
                 'h3',
                 { className: 'panel-title' },
-                'Current Road Conditions'
+                'Current Trends'
               )
             ),
             _react2.default.createElement(
