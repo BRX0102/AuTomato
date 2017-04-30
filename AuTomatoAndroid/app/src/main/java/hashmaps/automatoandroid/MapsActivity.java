@@ -28,9 +28,15 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import io.socket.client.IO;
@@ -43,6 +49,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         , LocationListener
         , View.OnClickListener{
 
+
     //SocketIO
     ///////////////////////////////////////////////////////
     private Socket mSocket;
@@ -51,6 +58,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     String selectedResNumString = "";
     int selectedResNum = 0;
     String defaultSpinnerHeader = "Select severity";
+
+    final String serverURL = "https://shielded-brushlands-57140.herokuapp.com";
 
     private Button markButton;
 
@@ -75,6 +84,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onResume() {
         super.onResume();
+           initialValues();
     }
 
     ////////////////////////////////////////////////////////
@@ -152,8 +162,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //START SPINNER CODE
         ///////////////////////////////////
-        //END SPINNER CODE
-        ///////////////////////////////////
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
                 this, android.R.layout.simple_spinner_item, spinnerArray);
         spinnerArrayAdapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
@@ -188,9 +196,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
         });
-
         //END SPINNER CODE
         ///////////////////////////////////
+
+        //SOCKETON
+        // Receiving an object
+//        try {
+//            mSocket = IO.socket(serverURL);
+//            mSocket.on("coordinates", new Emitter.Listener() {
+//                @Override
+//                public void call(Object... args) {
+//                    JSONObject obj = (JSONObject)args[0];
+//                        Log.d(TAG,"a response");
+//                }
+//            });
+//            mSocket.disconnect();
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//            Log.d(TAG,"fail");
+//        }
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -436,13 +460,192 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.markButton:
                 AutomatoAPI api = new AutomatoAPI();
                 if(selectedResNum > 0) {
-                    api.sendBlockade(mostRecentLocation, selectedResNum-1);
+                    //api.sendBlockade(mostRecentLocation, selectedResNum-1);
+                    //api.initialValues();
+                    //initialValues();
+                    sendBlockade(mostRecentLocation, selectedResNum-1);
                 }
                 break;
         }
     }
+
     public void toastIt(String message){
         Toast.makeText(this, message,
                 Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Initial values
+     */
+    public void initialValues(){
+        try {
+            //clears the map
+            if(mMap != null)
+                mMap.clear();
+            mSocket = IO.socket(serverURL);
+
+            mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+                    mSocket.emit("readData");
+                }
+
+            }).on("coordinates", new Emitter.Listener() {
+                @Override
+                public void call(final Object... args) {
+                    MapsActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Your code to run in GUI thread here
+
+                    Log.d(TAG, "got a response");
+                    JSONObject data = (JSONObject) args[0];
+                    Iterator<String> iter = data.keys();
+                    while (iter.hasNext()) {
+                        String key = iter.next();
+                        Log.d(TAG, key);
+                        try {
+                            JSONArray value = (JSONArray) data.get(key);
+                            for (int i = 0; i < value.length(); i++) {
+                                JSONObject objects = value.getJSONObject(i);
+                                Iterator key_2 = objects.keys();
+
+                                final Location location = new Location("automato");
+                                int severity = 3;
+
+                                while (key_2.hasNext()) {
+                                    String k = key_2.next().toString();
+                                    Log.d(TAG,"Key : " + k + ", value : "
+                                            + objects.getString(k));
+                                    //latitude
+                                    if(k.equals("latitude")) {
+                                        String temp = objects.getString(k);
+                                        Double tempD = Double.parseDouble(temp);
+                                        location.setLatitude(tempD);
+                                    }
+                                    if(k.equals("longitude")) {
+                                        String temp = objects.getString(k);
+                                        Double tempD = Double.parseDouble(temp);
+                                        location.setLongitude(tempD);
+                                    }
+                                    if(k.equals("status")) {
+                                        severity = objects.getInt(k);
+                                    }
+                                }
+                                // System.out.println(objects.toString());
+                                Log.d(TAG, "-----------");
+
+                                setNewMarker(location, severity);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    //mSocket.disconnect();
+                        }//public void run() {
+                    });
+                }
+
+            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+                    Log.d(TAG, "disconnected");
+                }
+
+            });
+            mSocket.connect();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sends latitude, longitude, and what type of blocked is it
+     */
+    public void sendBlockade(final Location aLocation, final int num){
+        try {
+            mSocket = IO.socket(serverURL);
+
+            mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+
+                    // Sending an object
+                    JSONObject obj = new JSONObject();
+                    try {
+                        obj.put("latitude", aLocation.getLatitude());
+                        obj.put("longitude", aLocation.getLongitude());
+                        obj.put("blockType", num);
+                        mSocket.emit("markEndPoint", obj);
+                        //getInitData();
+                        //mSocket.disconnect();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //SET NEW POINT ON MAP WITH THIS
+                }
+
+            }).on("newPoint", new Emitter.Listener() {
+                @Override
+                public void call(final Object... args) {
+
+                    MapsActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Your code to run in GUI thread here
+                    /*Log.d(TAG, "got a response");
+                    JSONObject data = (JSONObject) args[0];
+                    Double newLatitude;
+                    Double newLongitude;
+                    int newBlockType;
+                    try {
+                        newLatitude= data.getDouble("latitude");
+                        newLongitude= data.getDouble("longitude");
+                        newBlockType = data.getInt("blockType");
+
+
+                        Log.d(TAG,""+newLatitude);
+                        Log.d(TAG,""+newLongitude);
+                        Log.d(TAG,""+newBlockType);
+
+                        final Location location = new Location("automato");
+                        int severity = 3;
+
+                        location.setLatitude(newLatitude);
+                        location.setLongitude(newLongitude);
+
+                        setNewMarker(location, severity);
+
+                    } catch (JSONException e) {
+                        Log.d(TAG,"ERROR");
+                    }*/
+                    initialValues();
+                    mSocket.disconnect();
+                        }//public void run() {
+                    });
+                }
+
+            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+                    Log.d(TAG, "disconnected");
+                }
+
+            });
+            mSocket.connect();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setNewMarker(Location location, int severity){
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                .title("severity: "+severity)
+        );
     }
 }
