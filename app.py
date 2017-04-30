@@ -42,6 +42,7 @@ def read_data():
  
 @socketio.on('markEndPoint')
 def point_on_map(data):
+ userAdd=""
  print data['latitude']
  print data['longitude']
  print data['blockType']
