@@ -3,7 +3,7 @@ import flask_sqlalchemy, app
 
 
 # app.app = app module's app variable
-app.app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://brandan:blockwood@localhost/postgres'
+app.app.config['SQLALCHEMY_DATABASE_URI'] = app.os.getenv('DATABASE_URL')
 db = flask_sqlalchemy.SQLAlchemy(app.app)
 
 #db.create_all()
@@ -19,6 +19,13 @@ class ClosedRoads(db.Model):
     self.latiude = latiude
     self.longitude=longitude
     self.status=status
+ def json(self):
+  return {
+   'latiude':self.latiude,
+   'longitude':self.longitude,
+   'status':self.status
+   }
+   
 
  def __repr__(self): # what's __repr__?
     return '<latiude: %d, Longitude: %d,status: %d>' % (self.latiude,self.longitude,self.status)

@@ -8,7 +8,7 @@ import flask_sqlalchemy
 app = flask.Flask(__name__)
 
 # app.app = app module's app variable
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://brandan:blockwood@localhost/postgres'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 import models
 db = flask_sqlalchemy.SQLAlchemy(app)
 socketio = flask_socketio.SocketIO(app)
@@ -26,11 +26,7 @@ def hello():
 def on_connect():
  print "%s USER CONNECTED " %  flask.request.sid
 
-#why heroku why
-@socketio.on_error_default
-def default_error_handler(e):
-    print(request.event["message"]) # "my error event"
-    print(request.event["args"])    # (data,)
+
     
 @socketio.on('water')
 def on_co2(data):
@@ -41,9 +37,25 @@ def on_co2(data):
 
 @socketio.on('readData')
 def read_data():
- items =models.ClosedRoads.query.all()
- print items
-  
+ print os.getenv('DATABASE_URL')
+ socketio.emit('coordinates',{"items":[item.json() for item in models.ClosedRoads.query.all()]})
+ 
+@socketio.on('markEndPoint')
+def point_on_map(data):
+
+ print data['latitude']
+ print data['longitude']
+ print data['blockType']
+ point=models.ClosedRoads(data['latitude'],data['longitude'],data['blockType'])
+ models.db.session.add(point)
+ models.db.session.commit()
+ socketio.emit('newPoint',{"latitude":data["latitude"],"longitude":data["longitude"],"blockType":data["blockType"]})
+ socketio.emit('co2Client',data,broadcast=all)
+ #socketio.emit('markEndPointSuccess',{"status":"Success"})
+ 
+ 
+ print data
+ 
 @socketio.on('disconnect')
 def on_disconnect():
  global names

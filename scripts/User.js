@@ -17,13 +17,34 @@ var socket = SocketIO.connect();
   
 
 class Button extends Component {
+  constructor(props) {
+   super(props);
+    this.state = {
+    latiude:"",
+    longitude: "30",
+    status: "60"
+    };
+    //added new line of code to bind the state variable before it is used
+    //autobinding is disabled
+   this._coordinates= this._coordinates.bind(this)
+  }
+  
+   componentDidMount() {
+     
+      socket.on('markEndPointSuccess',this._coordinates)
+ 
+  }
     handleSubmit(event) {
         event.preventDefault();
 
         let random = Math.floor(Math.random() * 100);
         console.log('Generated a random number: ', random);
-        socket.emit('readData');
+        socket.emit('markEndPoint',{'latitude':100,'longitude':100,'blockType':0});
         console.log('Sent up the random number to server!');
+        
+    }
+    _coordinates(data){
+    console.log(data);
     }
 
     render() {
