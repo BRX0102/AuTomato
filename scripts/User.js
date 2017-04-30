@@ -2,6 +2,9 @@ import React,{Component } from 'react';
 import * as SocketIO from 'socket.io-client';
 import PropTypes from 'prop-types';
 import Thermometer from "react-thermometer";
+import GoogleMapReact from 'google-map-react';
+import SimpleMap from './SimpleMap';
+
 
 
 var ReactDOM = require('react-dom');
@@ -19,10 +22,11 @@ class Info extends Component{
    super(props);
     this.state = {
     CO2:"",
-    temp: "30",
+    temp: "45",
     humidityLevel: "60",
     moistureLevel: "10",
-    moistureState: "wet"
+    moistureState: "wet",
+    roadStatus: "muddy"
     };
     //added new line of code to bind the state variable before it is used
     //autobinding is disabled
@@ -87,7 +91,7 @@ class Info extends Component{
     return (
       <div>
         <div className="row">
-          <div className="panel panel-default col-md-2 col-xs-2 col-md-offset-4 col-xs-offset-3">
+          <div className="panel panel-default col-md-2 col-xs-2 col-md-offset-2 col-xs-offset-2">
             <div className="panel-heading"><h3 className="panel-title">Temperature</h3></div>
               <div className="panel-body">
                 <div className="col-md-2 col-xs-2 col-md-offset-3">
@@ -102,29 +106,22 @@ class Info extends Component{
                   		/>
                   	</div>
               </div>
-              <p>Current Temp: {this.state.temp} ° Celcius</p>
+              <div className="panel-footer">Current Temp: {this.state.temp} ° Fahrenheit</div>
           </div>
           
           <div className="panel panel-default col-md-2 col-xs-2">
           <div className="panel-heading"><h3 className="panel-title">Soil Moisture</h3></div>
           <div className="panel-body">
         		<img src={this._moistureLevel()} className="img-thumbnail" />
-              <div className="col-md-2 col-xs-2">
-                <p>State: {this.state.moistureState}</p>
-              </div>    
-          	</div>
+          </div>
+          <div className="panel-footer">State: {this.state.moistureState}</div>
         </div>
-        </div>
-          
-          
-      <div className="row">
-        <div className="panel panel-default col-md-2 col-xs-2 col-md-offset-4 col-xs-offset-3">
+
+        <div className="panel panel-default col-md-2 col-xs-2">
           <div className="panel-heading"><h3 className="panel-title">Smoke</h3></div>
           <div className="panel-body">
             <img src={this._smokeImage()} className="img-thumbnail" />
-            <div className="col-md-2 col-xs-2 col-md-offset-3">
-              <p>Safe!</p>
-            </div>
+            <div className="panel-footer">Safe!</div>
           </div>
         </div>
         
@@ -136,6 +133,20 @@ class Info extends Component{
               </div>
             </div>
           </div>
+      </div>
+      
+      
+      
+      <div className="row">
+        <div className="panel panel-default col-md-8 col-xs-8 col-md-offset-2 col-xs-offset-2">
+          <div className="panel-heading"><h3 className="panel-title">Current Road Conditions</h3></div>
+            <div className="panel-body">
+              <div className="madness" style={{width: '100%', height: '400px'}}>
+                <SimpleMap />
+              </div>
+            </div>
+            <div className="panel-footer">Status: {this.state.roadStatus}</div>
+        </div>
       </div>
     </div>
     );
