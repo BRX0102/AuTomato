@@ -81,7 +81,7 @@ def sendMessage(data):
     
     msgAlternative = MIMEMultipart('alternative')
     msgRoot.attach(msgAlternative)
-    msgText = MIMEText(msg, 'html')
+    msgText = MIMEText(msg, 'plain')
     msgAlternative.attach(msgText)
     #start emailing
     server = smtplib.SMTP( "smtp.gmail.com", 587 )
