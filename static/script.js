@@ -14400,9 +14400,140 @@ _reactDom2.default.render(_react2.default.createElement(_Content.Content, null),
 
 /***/ }),
 /* 120 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-throw new Error("Module build failed: SyntaxError: Unexpected token (8:1)\n\n\u001b[0m \u001b[90m  6 | \u001b[39m\n \u001b[90m  7 | \u001b[39m\u001b[36mconst\u001b[39m \u001b[33mAnyReactComponent\u001b[39m \u001b[33m=\u001b[39m ({ text }) \u001b[33m=>\u001b[39m (\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  8 | \u001b[39m\u001b[33m<<\u001b[39m\u001b[33m<<\u001b[39m\u001b[33m<<\u001b[39m\u001b[33m<\u001b[39m \u001b[33mHEAD\u001b[39m\n \u001b[90m    | \u001b[39m \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  9 | \u001b[39m  \n \u001b[90m 10 | \u001b[39m  \u001b[33m<\u001b[39m\u001b[33mdiv\u001b[39m id\u001b[33m=\u001b[39m\u001b[32m\"circle\"\u001b[39m\u001b[33m>\u001b[39m\n \u001b[90m 11 | \u001b[39m    {\u001b[0m\n");
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(13);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _googleMapReact = __webpack_require__(73);
+
+var _googleMapReact2 = _interopRequireDefault(_googleMapReact);
+
+var _socket = __webpack_require__(62);
+
+var SocketIO = _interopRequireWildcard(_socket);
+
+var _Socket = __webpack_require__(65);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var AnyReactComponent = function AnyReactComponent(_ref) {
+  var text = _ref.text;
+  return _getStatus({ text: text });
+};
+
+function _getStatus(_ref2) {
+  var text = _ref2.text;
+
+  console.log(text);
+  if (text === 0) {
+    return _react2.default.createElement('div', { id: 'circleGreen' });
+  } else if (text === 1) {
+    return _react2.default.createElement('div', { id: 'circleYellow' });
+  } else if (text === 2) {
+    return _react2.default.createElement('div', { id: 'circleOrange' });
+  } else if (text === 3) {
+    return _react2.default.createElement('div', { id: 'circleRed' });
+  }
+}
+
+var SimpleMap = function (_Component) {
+  _inherits(SimpleMap, _Component);
+
+  function SimpleMap(props) {
+    _classCallCheck(this, SimpleMap);
+
+    var _this = _possibleConstructorReturn(this, (SimpleMap.__proto__ || Object.getPrototypeOf(SimpleMap)).call(this, props));
+
+    _this.state = {
+      pointsLat: [],
+      pointsLon: [],
+      pointsStatus: []
+    };
+    _this._loadPoints = _this._loadPoints.bind(_this);
+    return _this;
+  }
+
+  _createClass(SimpleMap, [{
+    key: 'componentWillMount',
+    value: function componentWillMount() {
+      _Socket.Socket.on('coordinates', this._loadPoints);
+      _Socket.Socket.emit('readData');
+    }
+  }, {
+    key: '_loadPoints',
+    value: function _loadPoints(data) {
+      data = data["items"];
+      console.log(data);
+      var _state = this.state,
+          pointsLat = _state.pointsLat,
+          pointsLon = _state.pointsLon,
+          pointsStatus = _state.pointsStatus;
+
+      for (var i = 0; i < data.length; i++) {
+        pointsLat.push(data[i]['latitude']);
+        pointsLon.push(data[i]['longitude']);
+        pointsStatus.push(data[i]["status"]);
+      }
+      console.log(pointsLat);
+      this.setState({ pointsLat: pointsLat, pointsLon: pointsLon, pointsStatus: pointsStatus });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var points = [];
+      for (var i = 0; i < this.state.pointsLat.length; i++) {
+        points.push(_react2.default.createElement(AnyReactComponent, {
+          key: i,
+          lat: this.state.pointsLat[i],
+          lng: this.state.pointsLon[i],
+          text: this.state.pointsStatus[i]
+        }));
+      }
+      return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(
+          _googleMapReact2.default,
+          {
+            bootstrapURLKeys: { key: "AIzaSyC-ybfnXcarIL9o1ZTax8Afg1GHpTyNWP4" },
+            defaultCenter: this.props.center,
+            defaultZoom: this.props.zoom
+          },
+          points
+        )
+      );
+    }
+  }]);
+
+  return SimpleMap;
+}(_react.Component);
+
+exports.default = SimpleMap;
+
+
+SimpleMap.defaultProps = {
+  center: { lat: 36.676909, lng: -121.655713 },
+  zoom: 13
+};
 
 /***/ }),
 /* 121 */

@@ -5,17 +5,7 @@ import * as SocketIO from 'socket.io-client';
 import { Socket } from './Socket';
 
 const AnyReactComponent = ({ text }) => (
-<<<<<<< HEAD
-  
-  <div id="circle">
-    {
-   text
-    
-    }
-  </div>
-=======
   _getStatus({text})
->>>>>>> 52bf5d2dd4bf1bff9020973a38048103932bab59
 );
 
 function _getStatus({text}) {
