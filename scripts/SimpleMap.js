@@ -5,11 +5,33 @@ import * as SocketIO from 'socket.io-client';
 import { Socket } from './Socket';
 
 const AnyReactComponent = ({ text }) => (
-  <div id="circle">
-    {text}
-  </div>
+  _getStatus({text})
 );
 
+function _getStatus({text}) {
+  console.log(text);
+  if(text === 0){
+    return(
+      <div id="circleGreen">
+      </div>
+      );
+    }else if(text === 1){
+    return(
+      <div id="circleYellow">
+      </div>
+      );
+    }else if(text === 2){
+    return(
+      <div id="circleOrange">
+      </div>
+      );
+    }else if(text === 3){
+    return(
+      <div id="circleRed">
+      </div>
+      );
+    }
+}
 
 export default class SimpleMap extends Component {
   constructor(props){
@@ -49,7 +71,7 @@ export default class SimpleMap extends Component {
         key={i}
         lat={this.state.pointsLat[i]} 
         lng={this.state.pointsLon[i]} 
-        
+        text={this.state.pointsStatus[i]}
       />);
     }
     return (
