@@ -125,23 +125,28 @@ class Info extends Component{
     return (
       <div>
         <div className="row">
-          <div className="panel panel-default col-md-8 col-xs-8 col-md-offset-2 col-xs-offset-2">
+          <div className="panel panel-default col-md-8 col-xs-8 col-md-offset-1 col-xs-offset-1">
             <div className="panel-heading"><h3 className="panel-title">Current Road Conditions</h3></div>
               <div className="panel-body">
                 <div className="madness" style={{width: '100%', height: '400px'}}>
                   <SimpleMap />
                 </div>
               </div>
-              <div className="panel-footer">Legend: <div id="circleGreen">Clear</div> <div id="circleYellow">Trucks</div> <div id="circleOrange">Tractors</div> <div id="circleRed">Impassable</div></div>
+              <div className="panel-footer">Alert Status: </div>
+          </div>
+          
+          <div className="panel panel-default col-md-2 col-xs-2">
+            <div className="panel-heading"><h3 className="panel-title">Current Road Conditions</h3></div>
+              <div className="panel-body">Legend: <div id="circleGreen">Clear</div> <div id="circleYellow">Trucks</div> <div id="circleOrange">Tractors</div> <div id="circleRed">Impassable</div></div>
           </div>
         </div>
         
         <div className="row">
-          <div className="panel panel-default col-md-8 col-xs-8 col-md-offset-2 col-xs-offset-2">
+          <div className="panel panel-default col-md-10 col-xs-10 col-md-offset-1 col-xs-offset-1">
             <div className="panel-heading"><h3 className="panel-title">Current Trends</h3></div>
             <div className="panel-body">
               <div className="madness" style={{width: '100%', height: '400px'}}>
-                <SimpleMap />
+                
               </div>
             </div>
             <div className="panel-footer">Status: {this.state.roadStatus}</div>
