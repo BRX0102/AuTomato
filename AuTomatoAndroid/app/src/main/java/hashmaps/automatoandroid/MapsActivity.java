@@ -477,7 +477,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     /**
-     * Initial values
+     * Initial values for the map
      */
     public void initialValues(){
         try {
