@@ -36,7 +36,12 @@ while 1:
     if '\n' in data1:
         data1 = data1
         if int(data1) >= 100 and int(data1)<1000:
-            socketIO.emit('water',data1)
+            #socketIO.emit('water',data1)
+            socketIO.emit('markForGraph',{
+                        'latitude': poLatitude,
+                        'longitude': poLongitude,
+                        'status': int(data1),
+                    })
             print data1
 
             if int(data1) < 490:
