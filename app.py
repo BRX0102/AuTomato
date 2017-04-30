@@ -4,6 +4,10 @@ from flask import request
 from flask_socketio import emit,send
 import json
 import flask_sqlalchemy
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
+from email.MIMEImage import MIMEImage
+import smtplib
 
 app = flask.Flask(__name__)
 
@@ -69,16 +73,23 @@ def sendMessage(data):
     strFrom = os.getenv('email')
     strTo = str(os.getenv("number"))+"@mms.att.net"
     # Create the root message and fill in the from, to, and subject headers
+    msgRoot = MIMEMultipart('related')
     msgRoot['From'] = strFrom
     msgRoot['To'] = strTo
+    msgRoot.preamble = 'This is a multi-part message in MIME format.'
     msg = 'Alert at '+data
+    
+    msgAlternative = MIMEMultipart('alternative')
+    msgRoot.attach(msgAlternative)
+    msgText = MIMEText(msg, 'html')
+    msgAlternative.attach(msgText)
     #start emailing
     server = smtplib.SMTP( "smtp.gmail.com", 587 )
     # Send the email (this example assumes SMTP authentication is required)
     server.starttls();
     server.login( os.getenv('email'),os.getenv('password'))
 
-    server.sendmail(strFrom, strTo, msg)
+    server.sendmail(strFrom, strTo, msgRoot.as_string())
     server.quit()
 
 @socketio.on('disconnect')
