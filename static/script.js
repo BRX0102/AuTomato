@@ -13912,7 +13912,7 @@ var Button = function (_Component) {
     key: 'componentDidMount',
     value: function componentDidMount() {
 
-      socket.on('coordinates', this._coordinates);
+      socket.on('markEndPointSuccess', this._coordinates);
     }
   }, {
     key: 'handleSubmit',

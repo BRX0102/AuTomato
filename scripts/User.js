@@ -28,7 +28,7 @@ class Button extends Component {
   
    componentDidMount() {
      
-      socket.on('coordinates',this._coordinates)
+      socket.on('markEndPointSuccess',this._coordinates)
  
   }
     handleSubmit(event) {
