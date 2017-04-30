@@ -404,8 +404,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //marker
         //mMap.moveCamera(center);
-        mMap.animateCamera(CameraUpdateFactory.zoomIn());
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
+        //mMap.animateCamera(CameraUpdateFactory.zoomIn());
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 14));
     }
 
     @Override
