@@ -1,28 +1,66 @@
-import React,{Component } from 'react';
+import React,{Component} from 'react';
 import * as SocketIO from 'socket.io-client';
 import PropTypes from 'prop-types';
 import Thermometer from "react-thermometer";
+import GoogleMapReact from 'google-map-react';
+import SimpleMap from './SimpleMap';
 
+import { Socket } from './Socket';
 
 var ReactDOM = require('react-dom');
 
-var socket = SocketIO.connect();
-
-  socket.on('connect',function() {
+  Socket.on('connect',function() {
     
       });
   
 
+class Button extends Component {
+  constructor(props) {
+   super(props);
+    this.state = {
 
+    };
+    //added new line of code to bind the state variable before it is used
+    //autobinding is disabled
+   this._coordinates= this._coordinates.bind(this)
+  }
+  
+   componentDidMount() {
+     
+      Socket.on('markEndPointSuccess',this._coordinates)
+ 
+  }
+    handleSubmit(event) {
+        event.preventDefault();
+
+        let random = Math.floor(Math.random() * 100);
+        console.log('Generated a random number: ', random);
+        Socket.emit('markEndPoint',{'latitude':100,'longitude':100,'blockType':0});
+        console.log('Sent up the random number to server!');
+        
+    }
+    _coordinates(data){
+    console.log(data);
+    }
+
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <button>Send up a random number!</button>
+            </form>
+        );
+    }
+}
 class Info extends Component{
  constructor(props) {
    super(props);
     this.state = {
     CO2:"",
-    temp: "30",
+    temp: "45",
     humidityLevel: "60",
     moistureLevel: "10",
-    moistureState: "wet"
+    moistureState: "wet",
+    roadStatus: "muddy"
     };
     //added new line of code to bind the state variable before it is used
     //autobinding is disabled
@@ -33,9 +71,9 @@ class Info extends Component{
   
   componentDidMount() {
      
-      socket.on('co2Client',this._CO2)
+      Socket.on('co2Client',this._CO2)
     
-      socket.on('disconnect',function(){
+      Socket.on('disconnect',function(){
         
       });
   }
@@ -78,7 +116,7 @@ class Info extends Component{
 
   callStuff()
   {
-    socket.emit("co2");
+    Socket.emit("co2");
   }
  
   
@@ -87,57 +125,49 @@ class Info extends Component{
     return (
       <div>
         <div className="row">
-          <div className="panel panel-default col-md-2 col-xs-2 col-md-offset-4 col-xs-offset-3">
-            <div className="panel-heading"><h3 className="panel-title">Temperature</h3></div>
+          <div className="panel panel-default col-md-8 col-xs-8 col-md-offset-1 col-xs-offset-1">
+            <div className="panel-heading"><h3 className="panel-title">Current Road Conditions</h3></div>
               <div className="panel-body">
-                <div className="col-md-2 col-xs-2 col-md-offset-3">
-                  		<Thermometer
-                  				min={30}
-                  				max={130}
-                  				width={20}
-                  				height={150}
-                  				backgroundColor={'blue'}
-                  				fillColor={'green'}
-                  				current={this.state.temp}
-                  		/>
-                  	</div>
+                <div className="madness" style={{width: '100%', height: '400px'}}>
+                  <SimpleMap />
+                </div>
               </div>
-              <p>Current Temp: {this.state.temp} ° Celcius</p>
+              <div className="panel-footer">Alert Status: </div>
           </div>
           
           <div className="panel panel-default col-md-2 col-xs-2">
-          <div className="panel-heading"><h3 className="panel-title">Soil Moisture</h3></div>
-          <div className="panel-body">
-        		<img src={this._moistureLevel()} className="img-thumbnail" />
-              <div className="col-md-2 col-xs-2">
-                <p>State: {this.state.moistureState}</p>
-              </div>    
-          	</div>
-        </div>
-        </div>
-          
-          
-      <div className="row">
-        <div className="panel panel-default col-md-2 col-xs-2 col-md-offset-4 col-xs-offset-3">
-          <div className="panel-heading"><h3 className="panel-title">Smoke</h3></div>
-          <div className="panel-body">
-            <img src={this._smokeImage()} className="img-thumbnail" />
-            <div className="col-md-2 col-xs-2 col-md-offset-3">
-              <p>Safe!</p>
-            </div>
+            <div className="panel-heading"><h3 className="panel-title">Current Road Conditions</h3></div>
+              <div className="panel-body">Legend: 
+              <table>
+                <tr>
+                  <td><div id="circleGreen"> </div></td><td>Clear</td>
+                </tr>
+                <tr>
+                  <td><div id="circleYellow"> </div></td><td>Trucks</td>
+                </tr>
+                <tr>
+                  <td><div id="circleOrange"> </div></td><td>Tractors</td> 
+                </tr>
+                <tr>
+                  <td><div id="circleRed"> </div></td><td>Impassable</td>
+                </tr>
+              </table>
+              </div>
           </div>
         </div>
         
-        <div className="panel panel-default col-md-2 col-xs-2">
-            <div className="panel-heading row"><h3 className="panel-title">Humidity</h3></div>
+        <div className="row">
+          <div className="panel panel-default col-md-10 col-xs-10 col-md-offset-1 col-xs-offset-1">
+            <div className="panel-heading"><h3 className="panel-title">Current Trends</h3></div>
             <div className="panel-body">
-            	<div className="col-md-2 col-xs-2 col-md-offset-4">
-            	  <p>Level: {this.state.humidityLevel}%</p>
+              <div className="madness" style={{width: '100%', height: '400px'}}>
+                
               </div>
             </div>
-          </div>
+            <div className="panel-footer">Status: {this.state.roadStatus}</div>
+        </div>
       </div>
-    </div>
+      </div>
     );
   }
   
