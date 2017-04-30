@@ -50,6 +50,7 @@ def read_data():
 @socketio.on('initalData')
 def intial_graph_data():
  socketio.emit('initData',{"sensorInfo":[item.json() for item in models.sensors.query.all()]})
+ 
 @socketio.on('markForGraph')
 def point_on_map(data):
  print data 
@@ -71,7 +72,13 @@ def point_on_map(data):
  models.db.session.commit()
  socketio.emit('graph',{"sensorInfo":[item.json() for item in models.sensors.query.all()]})
  socketio.emit('co2Client',data,broadcast=all)
- 
+
+@socketio.on('deleteLocation')
+def delete_location(data):
+ items=models.ClosedRoads.filter(models.ClosedRoads.latiude==data["latitude"],models.ClosedRoads.longitude==data["longitude"]).all()
+ models.db.session.delete(items)        
+ models.db.session.commit()
+ socketio.emit('coordinates',{"items":[item.json() for item in models.ClosedRoads.query.all()]})
 @socketio.on('markEndPoint')
 def point_on_map(data):
  print data 

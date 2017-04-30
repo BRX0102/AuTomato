@@ -5,8 +5,12 @@ import * as SocketIO from 'socket.io-client';
 import { Socket } from './Socket';
 
 const AnyReactComponent = ({ text }) => (
+  
   <div id="circle">
-    {text}
+    {
+   text
+    
+    }
   </div>
 );
 
@@ -49,7 +53,7 @@ export default class SimpleMap extends Component {
         key={i}
         lat={this.state.pointsLat[i]} 
         lng={this.state.pointsLon[i]} 
-        
+        text={this.state.pointsStatus[i]}
       />);
     }
     return (
