@@ -21,11 +21,11 @@ class ClosedRoads(db.Model):
     self.status=status
  def json(self):
   return {
-   'latiude':self.latiude,
+   'latitude':self.latiude,
    'longitude':self.longitude,
    'status':self.status
    }
    
 
  def __repr__(self): # what's __repr__?
-    return '<latiude: %d, Longitude: %d,status: %d>' % (self.latiude,self.longitude,self.status)
+    return '<latitude: %d, Longitude: %d,status: %d>' % (self.latiude,self.longitude,self.status)
