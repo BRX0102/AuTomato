@@ -10,6 +10,11 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -22,14 +27,51 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 //hashmaps-allday
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks
         , GoogleApiClient.OnConnectionFailedListener
-        , LocationListener {
+        , LocationListener
+        , View.OnClickListener
+        , GoogleMap.OnMarkerClickListener{
 
-    private final String TAG = MapsActivity.class.getSimpleName();
+
+    //SocketIO
+    ///////////////////////////////////////////////////////
+    private Socket mSocket;
+    ///////////////////////////////////////////////////////
+    int spinnerPosition;
+    String selectedResNumString = "";
+    int selectedResNum = 0;
+    String defaultSpinnerHeader = "Select severity";
+
+    final String serverURL = "https://shielded-brushlands-57140.herokuapp.com";
+
+    private Button markButton, deleteButton;
+
+    private Spinner roadSpinner;
+
+    private static Location mostRecentLocation = null;
+
+    private final String TAG = "MapsActivity";
 
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
@@ -42,6 +84,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationRequest mLocationRequest;
     private double currentLatitude;
     private double currentLongitude;
+
+    Location recentMark = null;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+           initialValues();
+    }
+
     ////////////////////////////////////////////////////////
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +148,82 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mGoogleApiClient.connect();
         }
 
+        markButton = (Button) findViewById(R.id.markButton);
+        deleteButton = (Button) findViewById(R.id.deleteButton);
 
+        markButton.setOnClickListener(this);
+        deleteButton.setOnClickListener(this);
 
+        roadSpinner = (Spinner) findViewById(R.id.roadSpinner);
+
+        //START SPINNER CODE
+        ///////////////////////////////////
+        //START LISTVIEW CODE
+        ///////////////////////////////////////////
+        ArrayList<String> mobileArray = new ArrayList<String>();
+        //list of data to display
+        final List<String> spinnerArray = new ArrayList<String>();
+        spinnerArray.add(defaultSpinnerHeader);
+        spinnerArray.add("Everyone");
+        spinnerArray.add("4x4 only");
+        spinnerArray.add("Tractor Only");
+        spinnerArray.add("No One");
+
+        //START SPINNER CODE
+        ///////////////////////////////////
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, spinnerArray);
+        spinnerArrayAdapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+
+// Spinner spinYear = (Spinner)findViewById(R.id.spin);
+        roadSpinner.setAdapter(spinnerArrayAdapter);
+        roadSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // your code here
+                //int spinnerPosition = bookSpinner.getSelectedItemPosition();
+                spinnerPosition = position;
+                //ToastIt(""+position);
+
+                //gets the chosen item
+                //skip 0 because that is not a book
+                for(int i=1; i < spinnerArray.size(); i++){
+                    if(spinnerPosition == i){
+                        selectedResNumString = spinnerArray.get(i);
+                        selectedResNum = i;
+                        //selectedResNum = Integer.parseInt(selectedResNumString);
+                        Log.d(TAG, "selected item: "+selectedResNumString);
+                        toastIt(selectedResNumString);
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+        //END SPINNER CODE
+        ///////////////////////////////////
+
+        //SOCKETON
+        // Receiving an object
+//        try {
+//            mSocket = IO.socket(serverURL);
+//            mSocket.on("coordinates", new Emitter.Listener() {
+//                @Override
+//                public void call(Object... args) {
+//                    JSONObject obj = (JSONObject)args[0];
+//                        Log.d(TAG,"a response");
+//                }
+//            });
+//            mSocket.disconnect();
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//            Log.d(TAG,"fail");
+//        }
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -238,6 +363,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
+    protected void onPostResume() {
+        super.onPostResume();
+    }
+
+    @Override
     public void onConnected(Bundle bundle) {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -283,8 +413,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //marker
         //mMap.moveCamera(center);
-        mMap.animateCamera(CameraUpdateFactory.zoomIn());
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
+        //mMap.animateCamera(CameraUpdateFactory.zoomIn());
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 14));
     }
 
     @Override
@@ -326,9 +456,286 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         currentLongitude = location.getLongitude();
 
         centerMapOnMyLocation();
+        mostRecentLocation = location;
 
         //ToastIt("Location Changed "+currentLatitude + " WORKS " + currentLongitude + "");
         Log.d(TAG, "onLocationChanged "+currentLatitude + " , " + currentLongitude + "");
     }
 
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+
+            case R.id.markButton:
+                //AutomatoAPI api = new AutomatoAPI();
+                if(selectedResNum > 0) {
+                    //api.sendBlockade(mostRecentLocation, selectedResNum-1);
+                    //api.initialValues();
+                    //initialValues();
+                    sendBlockade(mostRecentLocation, selectedResNum-1);
+                }
+                break;
+
+            case R.id.deleteButton:
+                if(recentMark !=null){
+                    //toastIt(recentMark.toString());
+                    deleteMarker(recentMark);
+                }
+                else{
+                    toastIt("please select a marker");
+                }
+                break;
+        }
+    }
+
+    public void toastIt(String message){
+        Toast.makeText(this, message,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Initial values for the map
+     */
+    public void initialValues(){
+        try {
+            //clears the map
+            if(mMap != null)
+                mMap.clear();
+            mSocket = IO.socket(serverURL);
+
+            mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+                    mSocket.emit("readData");
+                }
+
+            }).on("coordinates", new Emitter.Listener() {
+                @Override
+                public void call(final Object... args) {
+                    MapsActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Your code to run in GUI thread here
+
+                    Log.d(TAG, "got a response");
+                    JSONObject data = (JSONObject) args[0];
+                    Iterator<String> iter = data.keys();
+                    while (iter.hasNext()) {
+                        String key = iter.next();
+                        Log.d(TAG, key);
+                        try {
+                            JSONArray value = (JSONArray) data.get(key);
+                            for (int i = 0; i < value.length(); i++) {
+                                JSONObject objects = value.getJSONObject(i);
+                                Iterator key_2 = objects.keys();
+
+                                final Location location = new Location("automato");
+                                int severity = 3;
+
+                                while (key_2.hasNext()) {
+                                    String k = key_2.next().toString();
+                                    Log.d(TAG,"Key : " + k + ", value : "
+                                            + objects.getString(k));
+                                    //latitude
+                                    if(k.equals("latitude")) {
+                                        String temp = objects.getString(k);
+                                        Double tempD = Double.parseDouble(temp);
+                                        location.setLatitude(tempD);
+                                    }
+                                    if(k.equals("longitude")) {
+                                        String temp = objects.getString(k);
+                                        Double tempD = Double.parseDouble(temp);
+                                        location.setLongitude(tempD);
+                                    }
+                                    if(k.equals("status")) {
+                                        severity = objects.getInt(k);
+                                    }
+                                }
+                                // System.out.println(objects.toString());
+                                Log.d(TAG, "-----------");
+
+                                setNewMarker(location, severity);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    //mSocket.disconnect();
+                        }//public void run() {
+                    });
+                }
+
+            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+                    Log.d(TAG, "disconnected");
+                }
+
+            });
+            mSocket.connect();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sends latitude, longitude, and what type of blocked is it
+     */
+    public void sendBlockade(final Location aLocation, final int num){
+        try {
+            mSocket = IO.socket(serverURL);
+
+            mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+
+                    // Sending an object
+                    JSONObject obj = new JSONObject();
+                    try {
+                        obj.put("latitude", aLocation.getLatitude());
+                        obj.put("longitude", aLocation.getLongitude());
+                        obj.put("blockType", num);
+                        mSocket.emit("markEndPoint", obj);
+                        //getInitData();
+                        //mSocket.disconnect();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //SET NEW POINT ON MAP WITH THIS
+                }
+
+            }).on("newPoint", new Emitter.Listener() {
+                @Override
+                public void call(final Object... args) {
+
+                    MapsActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Your code to run in GUI thread here
+                    Log.d(TAG, "got a response");
+                    JSONObject data = (JSONObject) args[0];
+                    Double newLatitude;
+                    Double newLongitude;
+                    int newBlockType;
+                    try {
+                        newLatitude= data.getDouble("latitude");
+                        newLongitude= data.getDouble("longitude");
+                        newBlockType = data.getInt("blockType");
+
+
+                        Log.d(TAG,""+newLatitude);
+                        Log.d(TAG,""+newLongitude);
+                        Log.d(TAG,""+newBlockType);
+
+                        final Location location = new Location("automato");
+                        int severity = 3;
+
+                        location.setLatitude(newLatitude);
+                        location.setLongitude(newLongitude);
+
+                        setNewMarker(location, severity);
+
+                    } catch (JSONException e) {
+                        Log.d(TAG,"ERROR");
+                    }
+                    mSocket.disconnect();
+                        }//public void run() {
+                    });
+                }
+
+            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+                    Log.d(TAG, "disconnected");
+                }
+
+            });
+            mSocket.connect();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sends latitude, longitude, and what type of blocked is it
+     */
+    public void deleteMarker(final Location aLocation){
+        try {
+            mSocket = IO.socket(serverURL);
+
+            mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+
+                    // Sending an object
+                    JSONObject obj = new JSONObject();
+                    try {
+                        obj.put("latitude", aLocation.getLatitude());
+                        obj.put("longitude", aLocation.getLongitude());
+                        mSocket.emit("deleteLocation", obj);
+                        //getInitData();
+                        //mSocket.disconnect();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //SET NEW POINT ON MAP WITH THIS
+                }
+            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+                    Log.d(TAG, "disconnected");
+                }
+
+            });
+            mSocket.connect();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+    public void setNewMarker(Location location, int severity){
+        mMap.setOnMarkerClickListener(this);
+
+        BitmapDescriptor bitmap = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
+        String title = "";
+        String snippet = "";
+        if(severity == 0){
+            title = "Everyone can pass by";
+            snippet = "The road is good!";
+            bitmap = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+        }
+        else if(severity == 1){
+            title = "4x4 only";
+            bitmap = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
+        }
+        else if(severity == 2){
+            title = "Tractor Only";
+            bitmap = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+        }
+        else if(severity == 3){
+            title = "No one can cross";
+            snippet = "Take another route";
+            bitmap = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+        }
+
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                .title("severity: "+title)
+                .snippet(snippet)
+                .icon(bitmap)
+        );
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        recentMark = new Location("automato");
+        recentMark.setLatitude(marker.getPosition().latitude);
+        recentMark.setLongitude(marker.getPosition().longitude);
+        return false;
+    }
 }
