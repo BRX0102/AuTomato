@@ -13873,6 +13873,14 @@ var _reactThermometer = __webpack_require__(202);
 
 var _reactThermometer2 = _interopRequireDefault(_reactThermometer);
 
+var _googleMapReact = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"google-map-react\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+
+var _googleMapReact2 = _interopRequireDefault(_googleMapReact);
+
+var _SimpleMap = __webpack_require__(246);
+
+var _SimpleMap2 = _interopRequireDefault(_SimpleMap);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -13957,10 +13965,11 @@ var Info = function (_Component2) {
 
     _this2.state = {
       CO2: "",
-      temp: "30",
+      temp: "45",
       humidityLevel: "60",
       moistureLevel: "10",
-      moistureState: "wet"
+      moistureState: "wet",
+      roadStatus: "muddy"
     };
     //added new line of code to bind the state variable before it is used
     //autobinding is disabled
@@ -14033,7 +14042,7 @@ var Info = function (_Component2) {
           { className: 'row' },
           _react2.default.createElement(
             'div',
-            { className: 'panel panel-default col-md-2 col-xs-2 col-md-offset-4 col-xs-offset-3' },
+            { className: 'panel panel-default col-md-2 col-xs-2 col-md-offset-2 col-xs-offset-2' },
             _react2.default.createElement(
               'div',
               { className: 'panel-heading' },
@@ -14061,11 +14070,11 @@ var Info = function (_Component2) {
               )
             ),
             _react2.default.createElement(
-              'p',
-              null,
+              'div',
+              { className: 'panel-footer' },
               'Current Temp: ',
               this.state.temp,
-              ' \xB0 Celcius'
+              ' \xB0 Fahrenheit'
             )
           ),
           _react2.default.createElement(
@@ -14083,26 +14092,18 @@ var Info = function (_Component2) {
             _react2.default.createElement(
               'div',
               { className: 'panel-body' },
-              _react2.default.createElement('img', { src: this._moistureLevel(), className: 'img-thumbnail' }),
-              _react2.default.createElement(
-                'div',
-                { className: 'col-md-2 col-xs-2' },
-                _react2.default.createElement(
-                  'p',
-                  null,
-                  'State: ',
-                  this.state.moistureState
-                )
-              )
+              _react2.default.createElement('img', { src: this._moistureLevel(), className: 'img-thumbnail' })
+            ),
+            _react2.default.createElement(
+              'div',
+              { className: 'panel-footer' },
+              'State: ',
+              this.state.moistureState
             )
-          )
-        ),
-        _react2.default.createElement(
-          'div',
-          { className: 'row' },
+          ),
           _react2.default.createElement(
             'div',
-            { className: 'panel panel-default col-md-2 col-xs-2 col-md-offset-4 col-xs-offset-3' },
+            { className: 'panel panel-default col-md-2 col-xs-2' },
             _react2.default.createElement(
               'div',
               { className: 'panel-heading' },
@@ -14118,12 +14119,8 @@ var Info = function (_Component2) {
               _react2.default.createElement('img', { src: this._smokeImage(), className: 'img-thumbnail' }),
               _react2.default.createElement(
                 'div',
-                { className: 'col-md-2 col-xs-2 col-md-offset-3' },
-                _react2.default.createElement(
-                  'p',
-                  null,
-                  'Safe!'
-                )
+                { className: 'panel-footer' },
+                'Safe!'
               )
             )
           ),
@@ -14158,6 +14155,38 @@ var Info = function (_Component2) {
                   '%'
                 )
               )
+            )
+          )
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'row' },
+          _react2.default.createElement(
+            'div',
+            { className: 'panel panel-default col-md-8 col-xs-8 col-md-offset-2 col-xs-offset-2' },
+            _react2.default.createElement(
+              'div',
+              { className: 'panel-heading' },
+              _react2.default.createElement(
+                'h3',
+                { className: 'panel-title' },
+                'Current Road Conditions'
+              )
+            ),
+            _react2.default.createElement(
+              'div',
+              { className: 'panel-body' },
+              _react2.default.createElement(
+                'div',
+                { className: 'madness', style: { width: '100%', height: '400px' } },
+                _react2.default.createElement(_SimpleMap2.default, null)
+              )
+            ),
+            _react2.default.createElement(
+              'div',
+              { className: 'panel-footer' },
+              'Status: ',
+              this.state.roadStatus
             )
           )
         )
@@ -31133,6 +31162,84 @@ module.exports = __webpack_amd_options__;
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 246 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(30);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _googleMapReact = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"google-map-react\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+
+var _googleMapReact2 = _interopRequireDefault(_googleMapReact);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var AnyReactComponent = function AnyReactComponent(_ref) {
+  var text = _ref.text;
+  return _react2.default.createElement(
+    'div',
+    { style: {
+        position: 'relative', color: 'white', background: 'red',
+        height: 40, width: 60, top: -20, left: -30
+      } },
+    text
+  );
+};
+
+var SimpleMap = function (_Component) {
+  _inherits(SimpleMap, _Component);
+
+  function SimpleMap() {
+    _classCallCheck(this, SimpleMap);
+
+    return _possibleConstructorReturn(this, (SimpleMap.__proto__ || Object.getPrototypeOf(SimpleMap)).apply(this, arguments));
+  }
+
+  _createClass(SimpleMap, [{
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        _googleMapReact2.default,
+        {
+          defaultCenter: this.props.center,
+          defaultZoom: this.props.zoom
+        },
+        _react2.default.createElement(AnyReactComponent, {
+          lat: 59.955413,
+          lng: 30.337844,
+          text: 'Kreyser Avrora'
+        })
+      );
+    }
+  }]);
+
+  return SimpleMap;
+}(_react.Component);
+
+exports.default = SimpleMap;
+
+SimpleMap.defaultProps = {
+  center: { lat: 59.95, lng: 30.33 },
+  zoom: 11
+};
 
 /***/ })
 /******/ ]);
