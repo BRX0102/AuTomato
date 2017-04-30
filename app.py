@@ -8,9 +8,9 @@ import flask_sqlalchemy
 app = flask.Flask(__name__)
 
 # app.app = app module's app variable
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+#app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 import models
-db = flask_sqlalchemy.SQLAlchemy(app)
+#db = flask_sqlalchemy.SQLAlchemy(app)
 socketio = flask_socketio.SocketIO(app)
 
 
@@ -41,7 +41,7 @@ def on_co2(data):
 
 @socketio.on('readData')
 def read_data():
- items =models.db.ClosedRoads.query.all()
+ items =models.ClosedRoads.query.all()
  print items
   
 @socketio.on('disconnect')
