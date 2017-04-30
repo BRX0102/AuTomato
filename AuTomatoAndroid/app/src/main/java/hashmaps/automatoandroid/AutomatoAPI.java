@@ -1,5 +1,10 @@
 package hashmaps.automatoandroid;
 
+import android.location.Location;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.URISyntaxException;
 
 import io.socket.client.IO;
@@ -19,7 +24,7 @@ public class AutomatoAPI {
     /**
      * Sends latitude, longitude, and what type of blocked is it
      */
-    public void sendBlockade(){
+    public void sendBlockade(final Location aLocation, final int num){
         try {
             mSocket = IO.socket(serverURL);
 
@@ -27,8 +32,19 @@ public class AutomatoAPI {
 
                 @Override
                 public void call(Object... args) {
-                    mSocket.emit("water", "a blockade");
-                    mSocket.disconnect();
+
+                    // Sending an object
+                    JSONObject obj = new JSONObject();
+                    try {
+                        obj.put("latitude", aLocation.getLatitude());
+                        obj.put("longitude", aLocation.getLongitude());
+                        obj.put("blockType", num);
+                        mSocket.emit("markEndPoint", obj);
+                        mSocket.disconnect();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
 
             }).on("event", new Emitter.Listener() {

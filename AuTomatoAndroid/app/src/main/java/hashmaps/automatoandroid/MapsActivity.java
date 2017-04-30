@@ -10,6 +10,11 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -25,6 +30,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -33,12 +40,23 @@ import io.socket.emitter.Emitter;
 //hashmaps-allday
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks
         , GoogleApiClient.OnConnectionFailedListener
-        , LocationListener {
+        , LocationListener
+        , View.OnClickListener{
 
     //SocketIO
     ///////////////////////////////////////////////////////
     private Socket mSocket;
     ///////////////////////////////////////////////////////
+    int spinnerPosition;
+    String selectedResNumString = "";
+    int selectedResNum = 0;
+    String defaultSpinnerHeader = "Select severity";
+
+    private Button markButton;
+
+    private Spinner roadSpinner;
+
+    private static Location mostRecentLocation = null;
 
     private final String TAG = "MapsActivity";
 
@@ -57,13 +75,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onResume() {
         super.onResume();
-
-        //INIT SOCKETIO
-        ///////////////////////////////////
-        //AuTomatoApplication app = (AuTomatoApplication) getApplication();
-        //mSocket = app.getSocket();
-        AutomatoAPI api = new AutomatoAPI();
-        api.sendBlockade();
     }
 
     ////////////////////////////////////////////////////////
@@ -121,8 +132,65 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mGoogleApiClient.connect();
         }
 
+        markButton = (Button) findViewById(R.id.markButton);
+        markButton.setOnClickListener(this);
 
+        roadSpinner = (Spinner) findViewById(R.id.roadSpinner);
 
+        //START SPINNER CODE
+        ///////////////////////////////////
+        //START LISTVIEW CODE
+        ///////////////////////////////////////////
+        ArrayList<String> mobileArray = new ArrayList<String>();
+        //list of data to display
+        final List<String> spinnerArray = new ArrayList<String>();
+        spinnerArray.add(defaultSpinnerHeader);
+        spinnerArray.add("Everyone");
+        spinnerArray.add("4x4 only");
+        spinnerArray.add("Tractor Only");
+        spinnerArray.add("No One");
+
+        //START SPINNER CODE
+        ///////////////////////////////////
+        //END SPINNER CODE
+        ///////////////////////////////////
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, spinnerArray);
+        spinnerArrayAdapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+
+// Spinner spinYear = (Spinner)findViewById(R.id.spin);
+        roadSpinner.setAdapter(spinnerArrayAdapter);
+        roadSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // your code here
+                //int spinnerPosition = bookSpinner.getSelectedItemPosition();
+                spinnerPosition = position;
+                //ToastIt(""+position);
+
+                //gets the chosen item
+                //skip 0 because that is not a book
+                for(int i=1; i < spinnerArray.size(); i++){
+                    if(spinnerPosition == i){
+                        selectedResNumString = spinnerArray.get(i);
+                        selectedResNum = i;
+                        //selectedResNum = Integer.parseInt(selectedResNumString);
+                        Log.d(TAG, "selected item: "+selectedResNumString);
+                        toastIt(selectedResNumString);
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+
+        //END SPINNER CODE
+        ///////////////////////////////////
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -355,9 +423,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         currentLongitude = location.getLongitude();
 
         centerMapOnMyLocation();
+        mostRecentLocation = location;
 
         //ToastIt("Location Changed "+currentLatitude + " WORKS " + currentLongitude + "");
         Log.d(TAG, "onLocationChanged "+currentLatitude + " , " + currentLongitude + "");
     }
 
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+
+            case R.id.markButton:
+                AutomatoAPI api = new AutomatoAPI();
+                if(selectedResNum > 0) {
+                    api.sendBlockade(mostRecentLocation, selectedResNum-1);
+                }
+                break;
+        }
+    }
+    public void toastIt(String message){
+        Toast.makeText(this, message,
+                Toast.LENGTH_SHORT).show();
+    }
 }
