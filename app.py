@@ -13,6 +13,7 @@ app = flask.Flask(__name__)
 
 # app.app = app module's app variable
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+#app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql://brandan:blockwood@localhost/postgres'
 import models
 db = flask_sqlalchemy.SQLAlchemy(app)
 socketio = flask_socketio.SocketIO(app)
@@ -44,6 +45,29 @@ def on_co2(data):
 def read_data():
  print os.getenv('DATABASE_URL')
  socketio.emit('coordinates',{"items":[item.json() for item in models.ClosedRoads.query.all()]})
+ 
+ 
+@socketio.on('markForGraph')
+def point_on_map(data):
+ print data 
+ print data['latitude']
+ print data['longitude']
+ print data['status']
+ info=int(data["status"])
+ if info<450:
+  #wet
+  data["status"]=0
+ elif info>450 and info<490:
+  #wet 
+  data["status"]=1
+ elif info>490:
+  data["status"]=2
+  
+ point=models.sensors(float(data['latitude']),float(data['longitude']),int(data['status']))
+ models.db.session.add(point)
+ models.db.session.commit()
+ socketio.emit('graph',{"sensorInfo":[item.json() for item in models.sensors.query.all()]})
+ socketio.emit('co2Client',data,broadcast=all)
  
 @socketio.on('markEndPoint')
 def point_on_map(data):
