@@ -31264,6 +31264,7 @@ var SimpleMap = function (_Component) {
         _react2.default.createElement(
           _googleMapReact2.default,
           {
+            bootstrapURLKeys: { key: "AIzaSyC-ybfnXcarIL9o1ZTax8Afg1GHpTyNWP4" },
             defaultCenter: this.props.center,
             defaultZoom: this.props.zoom
           },
