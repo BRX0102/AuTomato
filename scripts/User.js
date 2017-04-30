@@ -125,57 +125,20 @@ class Info extends Component{
     return (
       <div>
         <div className="row">
-          <div className="panel panel-default col-md-2 col-xs-2 col-md-offset-2 col-xs-offset-2">
-            <div className="panel-heading"><h3 className="panel-title">Temperature</h3></div>
+          <div className="panel panel-default col-md-8 col-xs-8 col-md-offset-2 col-xs-offset-2">
+            <div className="panel-heading"><h3 className="panel-title">Current Road Conditions</h3></div>
               <div className="panel-body">
-                <div className="col-md-2 col-xs-2 col-md-offset-3">
-                  		<Thermometer
-                  				min={30}
-                  				max={130}
-                  				width={20}
-                  				height={150}
-                  				backgroundColor={'blue'}
-                  				fillColor={'green'}
-                  				current={this.state.temp}
-                  		/>
-                  	</div>
+                <div className="madness" style={{width: '100%', height: '400px'}}>
+                  <SimpleMap />
+                </div>
               </div>
-              <div className="panel-footer">Current Temp: {this.state.temp} ° Fahrenheit</div>
-          </div>
-          
-          <div className="panel panel-default col-md-2 col-xs-2">
-          <div className="panel-heading"><h3 className="panel-title">Soil Moisture</h3></div>
-          <div className="panel-body">
-        		<img src={this._moistureLevel()} className="img-thumbnail" />
-          </div>
-          <div className="panel-footer">State: {this.state.moistureState}</div>
-        </div>
-
-        <div className="panel panel-default col-md-2 col-xs-2">
-          <div className="panel-heading"><h3 className="panel-title">Smoke</h3></div>
-          <div className="panel-body">
-            <img src={this._smokeImage()} className="img-thumbnail" />
-            <div className="panel-footer">Safe!</div>
+              <div className="panel-footer">Legend: <div id="circleGreen">Clear</div> <div id="circleYellow">Trucks</div> <div id="circleOrange">Tractors</div> <div id="circleRed">Impassable</div></div>
           </div>
         </div>
-        <div>
-        <Button/>
-        </div>
-        <div className="panel panel-default col-md-2 col-xs-2">
-            <div className="panel-heading row"><h3 className="panel-title">Humidity</h3></div>
-            <div className="panel-body">
-            	<div className="col-md-2 col-xs-2 col-md-offset-4">
-            	  <p>Level: {this.state.humidityLevel}%</p>
-              </div>
-            </div>
-          </div>
-      </div>
-      
-      
-      
-      <div className="row">
-        <div className="panel panel-default col-md-8 col-xs-8 col-md-offset-2 col-xs-offset-2">
-          <div className="panel-heading"><h3 className="panel-title">Current Road Conditions</h3></div>
+        
+        <div className="row">
+          <div className="panel panel-default col-md-8 col-xs-8 col-md-offset-2 col-xs-offset-2">
+            <div className="panel-heading"><h3 className="panel-title">Current Trends</h3></div>
             <div className="panel-body">
               <div className="madness" style={{width: '100%', height: '400px'}}>
                 <SimpleMap />
@@ -184,7 +147,7 @@ class Info extends Component{
             <div className="panel-footer">Status: {this.state.roadStatus}</div>
         </div>
       </div>
-    </div>
+      </div>
     );
   }
   
