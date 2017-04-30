@@ -30,6 +30,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
@@ -49,7 +50,8 @@ import io.socket.emitter.Emitter;
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks
         , GoogleApiClient.OnConnectionFailedListener
         , LocationListener
-        , View.OnClickListener{
+        , View.OnClickListener
+        , GoogleMap.OnMarkerClickListener{
 
 
     //SocketIO
@@ -63,7 +65,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     final String serverURL = "https://shielded-brushlands-57140.herokuapp.com";
 
-    private Button markButton;
+    private Button markButton, deleteButton;
 
     private Spinner roadSpinner;
 
@@ -82,6 +84,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationRequest mLocationRequest;
     private double currentLatitude;
     private double currentLongitude;
+
+    Location recentMark = null;
 
     @Override
     protected void onResume() {
@@ -145,7 +149,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         markButton = (Button) findViewById(R.id.markButton);
+        deleteButton = (Button) findViewById(R.id.deleteButton);
+
         markButton.setOnClickListener(this);
+        deleteButton.setOnClickListener(this);
 
         roadSpinner = (Spinner) findViewById(R.id.roadSpinner);
 
@@ -460,12 +467,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch(v.getId()){
 
             case R.id.markButton:
-                AutomatoAPI api = new AutomatoAPI();
+                //AutomatoAPI api = new AutomatoAPI();
                 if(selectedResNum > 0) {
                     //api.sendBlockade(mostRecentLocation, selectedResNum-1);
                     //api.initialValues();
                     //initialValues();
                     sendBlockade(mostRecentLocation, selectedResNum-1);
+                }
+                break;
+
+            case R.id.deleteButton:
+                if(recentMark !=null){
+                    //toastIt(recentMark.toString());
+                    deleteMarker(recentMark);
+                }
+                else{
+                    toastIt("please select a marker");
                 }
                 break;
         }
@@ -643,7 +660,47 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    /**
+     * Sends latitude, longitude, and what type of blocked is it
+     */
+    public void deleteMarker(final Location aLocation){
+        try {
+            mSocket = IO.socket(serverURL);
+
+            mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+
+                    // Sending an object
+                    JSONObject obj = new JSONObject();
+                    try {
+                        obj.put("latitude", aLocation.getLatitude());
+                        obj.put("longitude", aLocation.getLongitude());
+                        mSocket.emit("deleteLocation", obj);
+                        //getInitData();
+                        //mSocket.disconnect();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //SET NEW POINT ON MAP WITH THIS
+                }
+            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+                    Log.d(TAG, "disconnected");
+                }
+
+            });
+            mSocket.connect();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
     public void setNewMarker(Location location, int severity){
+        mMap.setOnMarkerClickListener(this);
+
         BitmapDescriptor bitmap = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
         String title = "";
         String snippet = "";
@@ -672,5 +729,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .snippet(snippet)
                 .icon(bitmap)
         );
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        recentMark = new Location("automato");
+        recentMark.setLatitude(marker.getPosition().latitude);
+        recentMark.setLongitude(marker.getPosition().longitude);
+        return false;
     }
 }

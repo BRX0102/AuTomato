@@ -20,9 +20,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="mark map"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true" />
+        android:layout_below="@+id/roadSpinner"
+        android:layout_alignParentEnd="true" />
 
     <Spinner
         android:id="@+id/roadSpinner"
@@ -41,5 +40,13 @@
         android:gravity="center"
         android:text="Who can access this road?"
         android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/roadSpinner"
+        android:text="delete" />
 
 </RelativeLayout>
