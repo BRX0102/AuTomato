@@ -14284,6 +14284,14 @@ var _googleMapReact = __webpack_require__(71);
 
 var _googleMapReact2 = _interopRequireDefault(_googleMapReact);
 
+var _socket = __webpack_require__(254);
+
+var SocketIO = _interopRequireWildcard(_socket);
+
+var _Socket = __webpack_require__(268);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -14296,7 +14304,7 @@ var AnyReactComponent = function AnyReactComponent(_ref) {
   var text = _ref.text;
   return _react2.default.createElement(
     'div',
-    null,
+    { id: 'circle' },
     text
   );
 };
@@ -14309,43 +14317,62 @@ var SimpleMap = function (_Component) {
 
     var _this = _possibleConstructorReturn(this, (SimpleMap.__proto__ || Object.getPrototypeOf(SimpleMap)).call(this, props));
 
+    _this.state = {
+      pointsLat: [36.6784577],
+      pointsLon: [-121.6568289],
+      pointsStatus: [0]
+    };
     _this._loadPoints = _this._loadPoints.bind(_this);
     return _this;
   }
 
   _createClass(SimpleMap, [{
-    key: 'componentDidMount',
-    value: function componentDidMount() {
-      socket.on('coordinates', this._loadPoints);
+    key: 'componentWillMount',
+    value: function componentWillMount() {
+      _Socket.Socket.on('coordinates', this._loadPoints);
+      _Socket.Socket.emit('readData');
     }
   }, {
     key: '_loadPoints',
     value: function _loadPoints(data) {
+      data = data["items"];
+      console.log(data);
+      var _state = this.state,
+          pointsLat = _state.pointsLat,
+          pointsLon = _state.pointsLon,
+          pointsStatus = _state.pointsStatus;
+
       for (var i = 0; i < data.length; i++) {
-        pointsLat.push(data.items['latitude']);
-        pointsLon.push(data.items['longitude']);
-        pointsText.push(data.items['blockType']);
+        pointsLat.push(data[i]['latitude']);
+        pointsLon.push(data[i]['longitude']);
+        pointsStatus.push(data[i]["status"]);
       }
+      console.log(pointsLat);
+      this.setState({ pointsLat: pointsLat, pointsLon: pointsLon, pointsStatus: pointsStatus });
     }
   }, {
     key: 'render',
     value: function render() {
-      var _this2 = this;
+      var points = [];
+      for (var i = 0; i < this.state.pointsLat.length; i++) {
+        points.push(_react2.default.createElement(AnyReactComponent, {
+          key: i,
+          lat: this.state.pointsLat[i],
+          lng: this.state.pointsLon[i]
 
+        }));
+      }
       return _react2.default.createElement(
-        _googleMapReact2.default,
-        {
-          defaultCenter: this.props.center,
-          defaultZoom: this.props.zoom
-        },
-        this.props.pointsLat.map(function (point, i) {
-          return _react2.default.createElement(AnyReactComponent, {
-            key: i,
-            lat: _this2.props.pointsLat,
-            lon: _this2.props.pointsLon,
-            text: _this2.props.text
-          });
-        })
+        'div',
+        null,
+        _react2.default.createElement(
+          _googleMapReact2.default,
+          {
+            defaultCenter: this.props.center,
+            defaultZoom: this.props.zoom
+          },
+          points
+        )
       );
     }
   }]);
@@ -14357,9 +14384,6 @@ exports.default = SimpleMap;
 
 
 SimpleMap.defaultProps = {
-  pointsLat: [],
-  pointsLon: [],
-  pointsText: [],
   center: { lat: 36.676909, lng: -121.655713 },
   zoom: 13
 };
@@ -14402,6 +14426,8 @@ var _SimpleMap = __webpack_require__(118);
 
 var _SimpleMap2 = _interopRequireDefault(_SimpleMap);
 
+var _Socket = __webpack_require__(268);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -14414,28 +14440,43 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var ReactDOM = __webpack_require__(40);
 
-var socket = SocketIO.connect();
-
-socket.on('connect', function () {});
+_Socket.Socket.on('connect', function () {});
 
 var Button = function (_Component) {
   _inherits(Button, _Component);
 
-  function Button() {
+  function Button(props) {
     _classCallCheck(this, Button);
 
-    return _possibleConstructorReturn(this, (Button.__proto__ || Object.getPrototypeOf(Button)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (Button.__proto__ || Object.getPrototypeOf(Button)).call(this, props));
+
+    _this.state = {};
+    //added new line of code to bind the state variable before it is used
+    //autobinding is disabled
+    _this._coordinates = _this._coordinates.bind(_this);
+    return _this;
   }
 
   _createClass(Button, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+
+      _Socket.Socket.on('markEndPointSuccess', this._coordinates);
+    }
+  }, {
     key: 'handleSubmit',
     value: function handleSubmit(event) {
       event.preventDefault();
 
       var random = Math.floor(Math.random() * 100);
       console.log('Generated a random number: ', random);
-      socket.emit('readData');
+      _Socket.Socket.emit('markEndPoint', { 'latitude': 100, 'longitude': 100, 'blockType': 0 });
       console.log('Sent up the random number to server!');
+    }
+  }, {
+    key: '_coordinates',
+    value: function _coordinates(data) {
+      console.log(data);
     }
   }, {
     key: 'render',
@@ -14481,9 +14522,9 @@ var Info = function (_Component2) {
     key: 'componentDidMount',
     value: function componentDidMount() {
 
-      socket.on('co2Client', this._CO2);
+      _Socket.Socket.on('co2Client', this._CO2);
 
-      socket.on('disconnect', function () {});
+      _Socket.Socket.on('disconnect', function () {});
     }
   }, {
     key: '_CO2',
@@ -14529,7 +14570,7 @@ var Info = function (_Component2) {
   }, {
     key: 'callStuff',
     value: function callStuff() {
-      socket.emit("co2");
+      _Socket.Socket.emit("co2");
     }
   }, {
     key: 'render',
@@ -34350,6 +34391,26 @@ function toArray(list, index) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 268 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Socket = undefined;
+
+var _socket = __webpack_require__(254);
+
+var SocketIO = _interopRequireWildcard(_socket);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var Socket = exports.Socket = SocketIO.connect();
 
 /***/ })
 /******/ ]);

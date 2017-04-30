@@ -21,7 +21,7 @@ class ClosedRoads(db.Model):
     self.status=status
  def json(self):
   return {
-   'latiude':self.latiude,
+   'latitude':self.latiude,
    'longitude':self.longitude,
    'status':self.status
    }

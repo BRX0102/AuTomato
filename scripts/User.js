@@ -5,13 +5,11 @@ import Thermometer from "react-thermometer";
 import GoogleMapReact from 'google-map-react';
 import SimpleMap from './SimpleMap';
 
-
+import { Socket } from './Socket';
 
 var ReactDOM = require('react-dom');
 
-var socket = SocketIO.connect();
-
-  socket.on('connect',function() {
+  Socket.on('connect',function() {
     
       });
   
@@ -20,9 +18,7 @@ class Button extends Component {
   constructor(props) {
    super(props);
     this.state = {
-    latiude:"",
-    longitude: "30",
-    status: "60"
+
     };
     //added new line of code to bind the state variable before it is used
     //autobinding is disabled
@@ -31,7 +27,7 @@ class Button extends Component {
   
    componentDidMount() {
      
-      socket.on('markEndPointSuccess',this._coordinates)
+      Socket.on('markEndPointSuccess',this._coordinates)
  
   }
     handleSubmit(event) {
@@ -39,7 +35,7 @@ class Button extends Component {
 
         let random = Math.floor(Math.random() * 100);
         console.log('Generated a random number: ', random);
-        socket.emit('markEndPoint',{'latitude':100,'longitude':100,'blockType':0});
+        Socket.emit('markEndPoint',{'latitude':100,'longitude':100,'blockType':0});
         console.log('Sent up the random number to server!');
         
     }
@@ -75,9 +71,9 @@ class Info extends Component{
   
   componentDidMount() {
      
-      socket.on('co2Client',this._CO2)
+      Socket.on('co2Client',this._CO2)
     
-      socket.on('disconnect',function(){
+      Socket.on('disconnect',function(){
         
       });
   }
@@ -120,7 +116,7 @@ class Info extends Component{
 
   callStuff()
   {
-    socket.emit("co2");
+    Socket.emit("co2");
   }
  
   

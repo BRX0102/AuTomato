@@ -139,3 +139,16 @@ color:rgb(192,192,192);
   overflow-y: auto;
   text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
 }
+
+#circle {
+    width: 70px;
+    height: 70px;
+    background: red;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
+    color:blue;
+    font-size: 150%;
+    text-align: justify;
+    position:relative;
+}
