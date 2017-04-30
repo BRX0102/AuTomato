@@ -27,6 +27,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -596,7 +598,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         @Override
                         public void run() {
                             //Your code to run in GUI thread here
-                    /*Log.d(TAG, "got a response");
+                    Log.d(TAG, "got a response");
                     JSONObject data = (JSONObject) args[0];
                     Double newLatitude;
                     Double newLongitude;
@@ -621,8 +623,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     } catch (JSONException e) {
                         Log.d(TAG,"ERROR");
-                    }*/
-                    initialValues();
+                    }
                     mSocket.disconnect();
                         }//public void run() {
                     });
@@ -643,9 +644,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void setNewMarker(Location location, int severity){
+        BitmapDescriptor bitmap = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
+        String title = "";
+        String snippet = "";
+        if(severity == 0){
+            title = "Everyone can pass by";
+            snippet = "The road is good!";
+            bitmap = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+        }
+        else if(severity == 1){
+            title = "4x4 only";
+            bitmap = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
+        }
+        else if(severity == 2){
+            title = "Tractor Only";
+            bitmap = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+        }
+        else if(severity == 3){
+            title = "No one can cross";
+            snippet = "Take another route";
+            bitmap = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+        }
+
         mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                .title("severity: "+severity)
+                .title("severity: "+title)
+                .snippet(snippet)
+                .icon(bitmap)
         );
     }
 }
