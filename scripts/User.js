@@ -137,7 +137,22 @@ class Info extends Component{
           
           <div className="panel panel-default col-md-2 col-xs-2">
             <div className="panel-heading"><h3 className="panel-title">Current Road Conditions</h3></div>
-              <div className="panel-body">Legend: <div id="circleGreen">Clear</div> <div id="circleYellow">Trucks</div> <div id="circleOrange">Tractors</div> <div id="circleRed">Impassable</div></div>
+              <div className="panel-body">Legend: 
+              <table>
+                <tr>
+                  <td><div id="circleGreen"> </div></td><td>Clear</td>
+                </tr>
+                <tr>
+                  <td><div id="circleYellow"> </div></td><td>Trucks</td>
+                </tr>
+                <tr>
+                  <td><div id="circleOrange"> </div></td><td>Tractors</td> 
+                </tr>
+                <tr>
+                  <td><div id="circleRed"> </div></td><td>Impassable</td>
+                </tr>
+              </table>
+              </div>
           </div>
         </div>
         

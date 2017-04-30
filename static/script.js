@@ -14078,29 +14078,82 @@ var Info = function (_Component2) {
             _react2.default.createElement(
               'div',
               { className: 'panel-body' },
-              'Legend: ',
+              'Legend:',
               _react2.default.createElement(
-                'div',
-                { id: 'circleGreen' },
-                'Clear'
-              ),
-              ' ',
-              _react2.default.createElement(
-                'div',
-                { id: 'circleYellow' },
-                'Trucks'
-              ),
-              ' ',
-              _react2.default.createElement(
-                'div',
-                { id: 'circleOrange' },
-                'Tractors'
-              ),
-              ' ',
-              _react2.default.createElement(
-                'div',
-                { id: 'circleRed' },
-                'Impassable'
+                'table',
+                null,
+                _react2.default.createElement(
+                  'tr',
+                  null,
+                  _react2.default.createElement(
+                    'td',
+                    null,
+                    _react2.default.createElement(
+                      'div',
+                      { id: 'circleGreen' },
+                      ' '
+                    )
+                  ),
+                  _react2.default.createElement(
+                    'td',
+                    null,
+                    'Clear'
+                  )
+                ),
+                _react2.default.createElement(
+                  'tr',
+                  null,
+                  _react2.default.createElement(
+                    'td',
+                    null,
+                    _react2.default.createElement(
+                      'div',
+                      { id: 'circleYellow' },
+                      ' '
+                    )
+                  ),
+                  _react2.default.createElement(
+                    'td',
+                    null,
+                    'Trucks'
+                  )
+                ),
+                _react2.default.createElement(
+                  'tr',
+                  null,
+                  _react2.default.createElement(
+                    'td',
+                    null,
+                    _react2.default.createElement(
+                      'div',
+                      { id: 'circleOrange' },
+                      ' '
+                    )
+                  ),
+                  _react2.default.createElement(
+                    'td',
+                    null,
+                    'Tractors'
+                  )
+                ),
+                _react2.default.createElement(
+                  'tr',
+                  null,
+                  _react2.default.createElement(
+                    'td',
+                    null,
+                    _react2.default.createElement(
+                      'div',
+                      { id: 'circleRed' },
+                      ' '
+                    )
+                  ),
+                  _react2.default.createElement(
+                    'td',
+                    null,
+                    'Impassable'
+                  )
+                )
               )
             )
           )
