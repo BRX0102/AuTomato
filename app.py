@@ -33,7 +33,8 @@ def on_co2(data):
  hello=data
  print(hello)
  socketio.emit('co2Client',hello,broadcast=all)
-   
+  
+
 
 @socketio.on('readData')
 def read_data():
@@ -55,7 +56,30 @@ def point_on_map(data):
  
  
  print data
- 
+
+@socketio.on('sendText')
+def sendMessage(data):
+     # Use sms gateway provided by mobile carrier:
+    # at&t:     number@mms.att.net
+    # t-mobile: number@tmomail.net
+    # verizon:  number@vtext.com
+    # sprint:   number@page.nextel.com
+    # Establish a secure session with gmail's outgoing SMTP server using your gmail account4
+    strFrom = os.getenv('email')
+    strTo = str(os.getenv("number"))+"@mms.att.net"
+    # Create the root message and fill in the from, to, and subject headers
+    msgRoot['From'] = strFrom
+    msgRoot['To'] = strTo
+    msg = 'Alert at'+data
+    #start emailing
+    server = smtplib.SMTP( "smtp.gmail.com", 587 )
+    # Send the email (this example assumes SMTP authentication is required)
+    server.starttls();
+    server.login( os.getenv('email'),os.getenv('password'))
+
+    server.sendmail(strFrom, strTo, msg)
+    server.quit()
+
 @socketio.on('disconnect')
 def on_disconnect():
  global names
