@@ -141,8 +141,8 @@ color:rgb(192,192,192);
 }
 
 #circle {
-    width: 70px;
-    height: 70px;
+    width: 25px;
+    height: 25px;
     background: red;
     -moz-border-radius: 50px;
     -webkit-border-radius: 50px;

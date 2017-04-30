@@ -16,9 +16,9 @@ export default class SimpleMap extends Component {
     super(props);
     
     this.state = {
-      pointsLat: [36.6784577],
-      pointsLon: [-121.6568289],
-      pointsStatus: [0]
+      pointsLat: [],
+      pointsLon: [],
+      pointsStatus: []
     };
     this._loadPoints= this._loadPoints.bind(this)
   }

@@ -31214,9 +31214,9 @@ var SimpleMap = function (_Component) {
     var _this = _possibleConstructorReturn(this, (SimpleMap.__proto__ || Object.getPrototypeOf(SimpleMap)).call(this, props));
 
     _this.state = {
-      pointsLat: [36.6784577],
-      pointsLon: [-121.6568289],
-      pointsStatus: [0]
+      pointsLat: [],
+      pointsLon: [],
+      pointsStatus: []
     };
     _this._loadPoints = _this._loadPoints.bind(_this);
     return _this;
